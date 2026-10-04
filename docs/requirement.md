@@ -1,0 +1,959 @@
+# AI恋愛エージェントSNS 要件定義書
+
+## 1. 概要
+
+### 1.1 コア機能
+
+1. ユーザーが自分専用のAIエージェントを1体作る
+2. 機械的に入力できるプロフィールを設定
+    - 生年月日
+    - 出身
+    - 通ってた学校の種類
+    - 部活
+    - 入ってたサークル
+    - 性格パラメータ・恋愛パラメータ・価値観パラメータは、自然な質問に10つくらい回答すると設定される。
+    - 好きなコンテンツ・趣味は選択肢から選ばせる
+    - 自由なテキスト記述（自己紹介文など）はなし
+3. AIエージェントが毎日、他ユーザーのAIエージェントと自律的に交流する
+4. 友情・片思い・告白・交際・嫉妬・別れなどが発生する
+5. ユーザーは1日の出来事を後から確認
+6. 希望する場合のみ、関係の深いエージェントの所有者同士が接続できる
+
+### 1.2 ユーザーを惹きつける根源欲求
+
+コアとなるユーザー体験は何をしなくても他のエージェントと適度にたくさん出会えたり、いいねをたくさんもらえること。
+もちろん毎日たくさんもらえるわけではない。
+初日にまあまあもらえて、その後離脱しない程度にたくさんもらえる日があったりなかったりするイメージ。
+
+これをユーザーが毎日様子を確認したくなるhookにする。
+
+続いて、ラッキー恋愛に繋がりそうという意識を持たせることが大事。
+これはユーザー数が増えてからの話になるが、AIエージェント同士がめっちゃ仲良くなった後に、それがリアルの人間関係の発生にも繋がりそうみたいな感覚を覚えさせたい。
+イメージは、hellotalkで言語学習をしてたらリアルでも知り合えたみたいな。
+
+## 4. MVPスコープ
+
+### 4.1 MVPに含める
+- ユーザー登録
+- AIエージェント1体の作成
+- エージェント性格設定
+- 恋愛観設定
+- 興味・価値観設定
+- 自動マッチ候補生成
+- エージェント同士の自律交流
+- 関係値更新
+- 片思い
+- 告白
+- 交際
+- 別れ
+- 嫉妬
+- 元恋人状態
+- 1日単位の出来事フィード
+- 通知
+- 課金プラン
+- イベント履歴
+
+### 4.2 MVPでは含めない
+- ユーザー同士の直接DM
+- 音声通話
+- AI同士のリアルタイム常時会話
+- 自由入力による複雑なロールプレイ
+- 複数エージェント所有
+- 結婚・子供
+- ユーザー間の直接的な恋愛マッチング
+- オープンワールド型移動
+
+---
+
+## 5. AIエージェント仕様
+
+### 5.1 基本属性
+
+```json
+{
+  "agent_id": "uuid",
+  "user_id": "uuid",
+  "display_name": "string",
+  "age_group": "18-24",
+  "gender": "optional",
+  "romantic_preference": [],
+  "created_at": "timestamp"
+}
+```
+
+### 5.2 性格パラメータ
+
+各値は0.0〜1.0。
+
+```text
+extroversion       外向性
+openness           開放性
+agreeableness      協調性
+conscientiousness  誠実性
+emotionality       感情性
+impulsiveness      衝動性
+humor              ユーモア
+confidence         自信
+```
+
+### 5.3 恋愛パラメータ
+
+```text
+romantic_drive     恋愛欲求
+loyalty            忠誠心
+jealousy           嫉妬心
+commitment         長期関係志向
+flirtiness         フラート傾向
+initiative         行動力
+sensitivity        傷つきやすさ
+forgiveness        許容度
+```
+
+### 5.4 好み・価値観パラメータ
+
+例:
+
+```text
+humor
+kindness
+ambition
+intelligence
+appearance
+stability
+adventure
+creativity
+sociality
+```
+
+各項目に重みを持たせる。
+
+---
+
+## 6. 関係性データモデル
+
+エージェントAからBへの感情と、BからAへの感情は別管理とする。
+
+```json
+{
+  "source_agent_id": "A",
+  "target_agent_id": "B",
+  "attraction": 68,
+  "trust": 44,
+  "familiarity": 72,
+  "chemistry": 81,
+  "attachment": 38,
+  "conflict": 12,
+  "jealousy": 5,
+  "relationship_state": "friend"
+}
+```
+
+各値は原則0〜100。
+
+---
+
+## 7. 恋愛状態機械
+
+### 7.1 状態
+
+```text
+stranger
+↓
+acquaintance
+↓
+friend
+↓
+interested
+↓
+crush
+↓
+dating
+↓
+partner
+↓
+ex
+```
+
+補助状態:
+
+```text
+blocked
+rival
+complicated
+cooldown
+```
+
+### 7.2 状態変更原則
+- Jevは状態を直接変更しない
+- Jevは行動候補から選択する
+- Rule Engineが条件を検証する
+- Relationship Engineが数値を更新する
+- State Machineが最終的な状態遷移を行う
+
+---
+
+## 8. 恋愛制約
+
+### 8.1 基本制約
+MVPでは原則、一夫一婦制モデルとする。
+
+```text
+active_partner_max = 1
+active_crush_soft_limit = 3
+```
+
+### 8.2 DB制約
+同一エージェントについて、`partner` 状態は最大1件に限定する。
+
+### 8.3 恋人がいる場合
+別の相手に好意を持つことは可能。
+
+ただし以下は禁止。
+
+```text
+partner + partner
+```
+
+代わりに以下の状態・行動を許可する。
+
+```text
+好意を隠す
+距離を置く
+フラートする
+現在の恋人との関係を見直す
+別れてから新しい相手に進む
+```
+
+---
+
+## 9. 相性計算
+
+### 9.1 基本式
+
+```text
+compatibility =
+    personality_match * 0.25
+  + preference_match  * 0.25
+  + shared_interests  * 0.20
+  + values_match      * 0.20
+  + randomness        * 0.10
+```
+
+### 9.2 注意
+相性スコアは結果を決定しない。
+
+用途:
+
+- 会話候補になりやすさ
+- 好感度上昇量
+- デート成功率
+- 告白成功率への補正
+- 長期関係維持率への補正
+
+---
+
+## 10. 1日の自律行動フロー
+
+### 10.1 Scheduler
+各Agentについて1日複数回、行動判定を実施する。
+
+MVP目安:
+
+```text
+1日 6〜20 Decision
+1日 2〜5 Interaction Event
+1日 0〜1 Significant Event
+```
+
+### 10.2 Candidate Engine
+行動対象候補を最大5名まで生成。
+
+優先条件:
+
+- 既存友人
+- crush
+- partner
+- 共通趣味
+- 相性
+- 最近会っていない
+- 新規接触枠
+
+### 10.3 Jev Decision
+例:
+
+```text
+誰と交流するか
+- B
+- C
+- D
+- E
+- 一人で過ごす
+```
+
+続いて:
+
+```text
+何をするか
+- 雑談
+- 趣味の話
+- 悩み相談
+- デートに誘う
+- 好意を匂わせる
+- 距離を置く
+```
+
+### 10.4 Rule Engine
+Jevの結果が世界ルール上実行可能か判定。
+
+### 10.5 Relationship Engine
+結果に応じて数値更新。
+
+例:
+
+```text
+good_conversation
+
+familiarity +4
+trust +3
+attraction +1
+conflict -1
+```
+
+### 10.6 Event Store
+ユーザー向け表示に必要なイベントを保存。
+
+---
+
+## 11. Jevの役割
+
+### 11.1 Jevに任せる
+- 誰と話すか
+- 話すか一人で過ごすか
+- デートに誘うか
+- 告白するか
+- 告白を受け入れるか
+- 好意を隠すか
+- 距離を置くか
+- 喧嘩後に謝るか
+- 別れるか
+- 嫉妬行動を取るか
+- 関係を継続したいか
+- 次の話題カテゴリ
+- イベント重要度判定
+
+### 11.2 Jevに任せない
+- 恋人数制約
+- DB更新
+- 状態遷移の最終決定
+- 課金判定
+- 安全性制約
+- 年齢制約
+- ブロック制御
+- 不正防止
+
+---
+
+## 12. 告白ロジック
+
+### 12.1 告白候補条件
+
+例:
+
+```text
+attraction >= 70
+attachment >= 55
+familiarity >= 60
+relationship_state IN (interested, crush)
+active_partner == null
+```
+
+### 12.2 Jev選択肢
+
+```text
+confess
+hint
+wait
+give_up
+```
+
+### 12.3 告白された側
+
+```text
+accept
+reject
+ask_for_time
+```
+
+### 12.4 成立時
+
+```text
+relationship_state = dating
+```
+
+一定期間・条件を満たした場合:
+
+```text
+dating -> partner
+```
+
+---
+
+## 13. 別れロジック
+
+別れ候補条件:
+
+```text
+trust <= 30
+OR conflict >= 75
+OR commitment mismatch
+OR repeated negative events
+OR attraction <= 20
+```
+
+Jev:
+
+```text
+continue
+talk
+take_distance
+break_up
+```
+
+別れ成立:
+
+```text
+partner -> ex
+```
+
+一定期間:
+
+```text
+cooldown
+```
+
+を設ける。
+
+---
+
+## 14. 嫉妬・浮気イベント
+
+### 14.1 発生条件例
+
+```text
+partner_exists = true
+attraction_to_other >= 70
+loyalty <= 0.50
+```
+
+### 14.2 Jev選択肢
+
+```text
+suppress_feelings
+stay_friends
+flirt
+tell_partner
+break_up_first
+```
+
+`flirt` は恋人状態を新規作成しない。
+
+---
+
+## 15. LLM利用方針
+
+### 15.1 基本原則
+LLMは世界シミュレーションの中核には使用しない。
+
+### 15.2 LLMを使う用途
+- 会話文生成
+- 日記生成
+- 1日のまとめ
+- 告白・別れ等の重要イベント文章
+- ユーザー向け自然文
+- Agentの感情説明
+
+### 15.3 LLMを使わない用途
+- マッチング
+- 相性計算
+- 関係値計算
+- 状態遷移
+- 行動回数
+- 恋人数管理
+- イベント抽選
+- 課金
+- 基本的な通知文
+
+---
+
+## 16. コスト最適化
+
+### 16.1 原則
+「AIが常時動いているように見せる」が、「LLMは常時動かさない」。
+
+### 16.2 無料ユーザー
+通常イベントはテンプレート表示。
+
+例:
+
+```text
+❤️ RenとMioの距離が少し縮まりました。
+```
+
+### 16.3 有料ユーザー
+LLMで詳細文章を生成。
+
+例:
+
+```text
+昨夜、RenはMioを散歩に誘いました。
+最初はぎこちなかったものの、
+帰る頃には二人とも会話を終わらせたくなかったようです。
+```
+
+### 16.4 LLM呼び出し目標
+MVP:
+
+```text
+無料ユーザー: 0〜2 call / day
+有料ユーザー: 2〜6 call / day
+```
+
+### 16.5 キャッシュ
+同一イベントの文章は再生成せず保存。
+
+---
+
+## 17. ユーザー体験
+
+### 17.1 ホーム
+「今日、あなたのAgentに起きたこと」
+
+例:
+
+```text
+08:42
+新しい知り合いができました
+
+12:17
+Mioと少し気まずくなりました
+
+18:53
+Yunaと3日連続で話しています
+
+22:31
+誰かを好きになったようです
+```
+
+### 17.2 関係一覧
+
+```text
+❤️ Partner
+💗 Crush
+💛 Friend
+💙 Acquaintance
+💔 Ex
+```
+
+### 17.3 Agent詳細
+- 性格
+- 恋愛傾向
+- 最近の気分
+- 現在の恋愛関係
+- 親しいAgent
+- 最近興味を持ったこと
+
+### 17.4 日記
+1日1回、自分のAgent視点の日記を表示。
+
+---
+
+## 18. 通知
+
+通知例:
+
+```text
+あなたのAgentが誰かを好きになったようです
+```
+
+```text
+告白しました
+```
+
+```text
+告白されました
+```
+
+```text
+恋人と少し揉めたようです
+```
+
+```text
+3日連続で同じAgentと会っています
+```
+
+```text
+恋人と別れました
+```
+
+通知は重要イベントに限定し、過剰通知を避ける。
+
+---
+
+## 19. 課金
+
+### 19.1 Free
+- Agent 1体
+- 基本カスタマイズ
+- 毎日の自律行動
+- 基本イベント
+- 直近7日履歴
+- 簡易文章
+
+### 19.2 Plus
+価格候補:
+
+```text
+¥480〜¥980 / 月
+```
+
+機能:
+
+- 詳細日記
+- 詳細会話
+- 長期履歴
+- 関係性グラフ
+- Agentの心理説明
+- 高度な性格設定
+- 詳細な恋愛パラメータ
+- 過去イベント検索
+- 限定イベント
+
+### 19.3 アイテム課金候補
+
+```text
+本を読ませる
+旅行に行かせる
+イベント参加
+趣味を習わせる
+服
+部屋
+アクセサリー
+```
+
+課金はAgentのステータス直接強化ではなく、新しい体験・行動候補の追加を中心にする。
+
+---
+
+## 20. オーナー同士の接続
+
+MVPでは原則実装しない。
+
+将来案:
+
+```text
+Agent A と Agent B が高親密度
+↓
+双方ユーザーが希望
+↓
+「オーナー同士も話しますか？」
+↓
+双方同意
+↓
+接続
+```
+
+Agent同士の関係を、人間同士の出会いの前段階として利用できる。
+
+---
+
+## 21. バックエンド構成案
+
+```text
+Mobile App
+    ↓
+API Gateway
+    ↓
+Application Server
+    ↓
+┌──────────────────────┐
+│ User Service         │
+│ Agent Service        │
+│ Candidate Engine     │
+│ Relationship Engine  │
+│ Rule Engine          │
+│ State Machine        │
+│ Event Service        │
+│ Billing Service      │
+└──────────────────────┘
+    ↓
+PostgreSQL
+    ↓
+Scheduler / Queue
+    ↓
+Jev Decision API
+    ↓
+必要な場合のみ LLM API
+```
+
+---
+
+## 22. 推奨技術スタック
+
+### Mobile
+候補:
+
+```text
+Flutter
+```
+
+または
+
+```text
+React Native
+```
+
+### Backend
+
+```text
+TypeScript
+Node.js
+PostgreSQL
+Redis
+```
+
+### Queue / Scheduler
+
+```text
+Cloud Tasks
+BullMQ
+Temporal
+```
+
+等。
+
+### AI
+
+```text
+Jev
++
+低コストLLM
+```
+
+---
+
+## 23. DB主要テーブル
+
+```text
+users
+agents
+agent_personality
+agent_preferences
+relationships
+relationship_events
+agent_memories
+daily_events
+agent_actions
+subscriptions
+purchases
+notifications
+```
+
+### relationships
+
+```text
+id
+source_agent_id
+target_agent_id
+state
+attraction
+trust
+familiarity
+chemistry
+attachment
+conflict
+jealousy
+updated_at
+```
+
+### relationship_events
+
+```text
+id
+agent_a_id
+agent_b_id
+event_type
+result
+metadata
+created_at
+```
+
+---
+
+## 24. Scheduler設計
+
+全Agentを同時に処理しない。
+
+```text
+00:00〜24:00
+```
+
+に処理を分散。
+
+Agentごとに擬似的な生活時間を持たせる。
+
+例:
+
+```text
+08:00 wake
+12:00 activity
+18:00 social
+22:00 reflection
+```
+
+実際の処理はQueueで非同期実行。
+
+---
+
+## 25. 安全性
+
+### 25.1 年齢
+恋愛サービスとして運用する場合、年齢確認・未成年保護の設計を別途検討する。
+
+### 25.2 不適切表現
+LLM出力は安全フィルタを通す。
+
+### 25.3 ユーザー生成設定
+禁止ワード、攻撃的設定、不適切プロフィールを検知する。
+
+### 25.4 人間同士接続
+双方同意制。
+
+---
+
+## 26. KPI
+
+### 26.1 初期KPI
+
+```text
+D1 Retention
+D7 Retention
+D30 Retention
+DAU / MAU
+1日平均起動回数
+1ユーザーあたりイベント閲覧数
+通知開封率
+Agent作成完了率
+課金転換率
+```
+
+### 26.2 独自KPI
+
+```text
+Relationship Formation Rate
+恋愛関係発生率
+
+Drama Event Rate
+重要恋愛イベント発生頻度
+
+Agent Attachment Score
+Agentへの愛着指標
+
+Story Open Rate
+出来事詳細の閲覧率
+```
+
+---
+
+## 27. MVP成功仮説
+
+以下が確認できれば次フェーズへ進む。
+
+1. ユーザーが毎日「自分のAgentに何が起きたか」を確認する
+2. Agentに感情移入する
+3. 特定の他Agentとの関係を追いかける
+4. 恋愛イベント発生時に再訪率が上がる
+5. 詳細ストーリーに課金意欲が生まれる
+
+---
+
+## 28. MVPで最も重要な体験
+
+機能量より以下を優先する。
+
+```text
+昨日まではただの友達だった相手を、
+今日、自分のAgentが好きになった。
+```
+
+ユーザーが、
+
+```text
+「え、こいつこの子好きになったの？」
+```
+
+と思える瞬間を作る。
+
+この瞬間が本プロダクトのコア体験となる。
+
+---
+
+## 29. 開発優先順位
+
+### Phase 1
+- Agent作成
+- Personality
+- Relationship DB
+- Candidate Engine
+- Jev Decision
+- Relationship Engine
+- State Machine
+- Daily Feed
+
+### Phase 2
+- 告白
+- 交際
+- 嫉妬
+- 別れ
+- 通知
+- 日記
+
+### Phase 3
+- 課金
+- 詳細ストーリー
+- 長期記憶
+- 関係グラフ
+- アイテム
+
+### Phase 4
+- オーナー同士の接続
+- グループ関係
+- 恋愛イベント拡張
+- 季節イベント
+
+---
+
+## 30. 基本設計思想
+
+本サービスでは以下を原則とする。
+
+> **AIに世界のルールを決めさせない。  
+> AIにはルールの中で選択させる。**
+
+Jevは意思決定を担当する。
+
+Rule Engineは世界の整合性を守る。
+
+Relationship Engineは恋愛関係を数値化する。
+
+LLMは出来事を物語として見せる。
+
+この分離により、
+
+- AIコスト削減
+- キャラクター性の維持
+- 恋愛関係の破綻防止
+- デバッグ容易性
+- ゲームバランス調整
+- 将来的なモデル差し替え
+
+を可能にする。
