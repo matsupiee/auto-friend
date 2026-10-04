@@ -1,0 +1,3 @@
+{
+  "extends": "@auto-friend/config/tsconfig.base.json"
+}

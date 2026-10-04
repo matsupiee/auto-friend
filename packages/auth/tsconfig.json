@@ -1,0 +1,6 @@
+{
+  "extends": "@auto-friend/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

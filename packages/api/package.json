@@ -1,0 +1,22 @@
+{
+  "name": "@auto-friend/api",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auto-friend/auth": "workspace:*",
+    "@auto-friend/db": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@auto-friend/config": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}
