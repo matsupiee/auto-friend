@@ -666,125 +666,12 @@ Agent同士の関係を、人間同士の出会いの前段階として利用で
 
 ---
 
-## 21. バックエンド構成案
-
-```text
-Mobile App
-    ↓
-API Gateway
-    ↓
-Application Server
-    ↓
-┌──────────────────────┐
-│ User Service         │
-│ Agent Service        │
-│ Candidate Engine     │
-│ Relationship Engine  │
-│ Rule Engine          │
-│ State Machine        │
-│ Event Service        │
-│ Billing Service      │
-└──────────────────────┘
-    ↓
-PostgreSQL
-    ↓
-Scheduler / Queue
-    ↓
-Jev Decision API
-    ↓
-必要な場合のみ LLM API
-```
-
----
-
-## 22. 推奨技術スタック
-
-### Mobile
-候補:
-
-```text
-Flutter
-```
-
-または
-
-```text
-React Native
-```
-
-### Backend
-
-```text
-TypeScript
-Node.js
-PostgreSQL
-Redis
-```
-
-### Queue / Scheduler
-
-```text
-Cloud Tasks
-BullMQ
-Temporal
-```
-
-等。
-
 ### AI
 
 ```text
 Jev
 +
 低コストLLM
-```
-
----
-
-## 23. DB主要テーブル
-
-```text
-users
-agents
-agent_personality
-agent_preferences
-relationships
-relationship_events
-agent_memories
-daily_events
-agent_actions
-subscriptions
-purchases
-notifications
-```
-
-### relationships
-
-```text
-id
-source_agent_id
-target_agent_id
-state
-attraction
-trust
-familiarity
-chemistry
-attachment
-conflict
-jealousy
-updated_at
-```
-
-### relationship_events
-
-```text
-id
-agent_a_id
-agent_b_id
-event_type
-result
-metadata
-created_at
 ```
 
 ---
@@ -897,41 +784,6 @@ Story Open Rate
 
 ---
 
-## 29. 開発優先順位
-
-### Phase 1
-- Agent作成
-- Personality
-- Relationship DB
-- Candidate Engine
-- Jev Decision
-- Relationship Engine
-- State Machine
-- Daily Feed
-
-### Phase 2
-- 告白
-- 交際
-- 嫉妬
-- 別れ
-- 通知
-- 日記
-
-### Phase 3
-- 課金
-- 詳細ストーリー
-- 長期記憶
-- 関係グラフ
-- アイテム
-
-### Phase 4
-- オーナー同士の接続
-- グループ関係
-- 恋愛イベント拡張
-- 季節イベント
-
----
-
 ## 30. 基本設計思想
 
 本サービスでは以下を原則とする。
@@ -957,3 +809,7 @@ LLMは出来事を物語として見せる。
 - 将来的なモデル差し替え
 
 を可能にする。
+
+# 初期サクラエージェント
+
+初期はユーザーがいない状態なので、500体くらいのサクラAIエージェントを用意して、彼らを動かす
