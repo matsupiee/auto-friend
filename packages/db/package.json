@@ -16,6 +16,7 @@
     "db:seed": "bun src/seed/seed-world.ts"
   },
   "dependencies": {
+    "@auto-friend/avatar": "workspace:*",
     "@libsql/client": "0.18.0",
     "@paralleldrive/cuid2": "^3.3.0",
     "drizzle-orm": "catalog:",

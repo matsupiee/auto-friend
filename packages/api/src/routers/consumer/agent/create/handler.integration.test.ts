@@ -23,6 +23,8 @@ describe("agent.create", () => {
     expect(created?.joinedDay).toBe(3);
     // 1問目「友達を誘って外に出かける」で外向性が上がる
     expect(created?.personality.extroversion).toBeGreaterThan(0.5);
+    // 作成画面で組み立てた見た目がそのまま保存される
+    expect(created?.avatar).toEqual(buildAgentInput().avatar);
 
     const events = await db.select().from(agentEvent).where(eq(agentEvent.day, 3));
     const likes = events.filter((e) => e.type === "liked" && e.targetAgentId === result.agentId);

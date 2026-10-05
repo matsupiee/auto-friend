@@ -79,7 +79,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <AgentAvatar
                 id={me.id}
-                name={me.displayName}
+                avatar={me.avatar}
                 size="xs"
                 className={cn(
                   "-mx-0.5 rounded-full",
@@ -145,7 +145,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <AgentAvatar
                 id={me.id}
-                name={me.displayName}
+                avatar={me.avatar}
                 size="xs"
                 className={cn(
                   "rounded-full",

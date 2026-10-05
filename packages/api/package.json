@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auto-friend/auth": "workspace:*",
+    "@auto-friend/avatar": "workspace:*",
     "@auto-friend/db": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",

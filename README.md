@@ -31,6 +31,7 @@ AIエージェント恋愛SNSのモック（Web のみ）を手元で動かす�
 5. `bun run dev` で起動し、http://localhost:3001 を開く。
 6. テスト
    - API: `cd packages/api && bun test`
+   - アバターのパーツ: `cd packages/avatar && bun test`
    - ユーザーストーリーの E2E: `cd apps/web && bun run test:e2e`（実行前に seed が自動で走る）
 
 ## Getting Started
@@ -120,6 +121,7 @@ auto-friend/
 ├── packages/
 │   ├── ui/          # Shared shadcn/ui components and styles
 │   ├── api/         # API layer / business logic
+│   ├── avatar/      # アバター（似顔絵）のパーツ一覧・入力チェック・おまかせ生成
 │   ├── auth/        # Authentication configuration & logic
 │   └── db/          # Database schema & queries
 ```

@@ -1,8 +1,11 @@
+import { buttonVariants } from "@auto-friend/ui/components/button";
+import { colorHex, favoriteColorOptions } from "@auto-friend/avatar/avatar-parts";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ChevronRight, Heart } from "lucide-react";
+import { ChevronRight, Heart, Palette } from "lucide-react";
 
 import { AgentAvatar, EmojiAvatar } from "@/components/agent-avatar";
+import { AvatarFigure } from "@/components/avatar/avatar-figure";
 import { PageContainer } from "@/components/app-shell";
 import Loader from "@/components/loader";
 import { ParameterBar } from "@/components/parameter-bar";
@@ -25,7 +28,20 @@ function AgentPage() {
       {/* プロフィールヘッダー */}
       <div className="border-b px-4 pt-5 pb-4">
         <div className="flex items-center gap-6">
-          <AgentAvatar id={a.id} name={a.displayName} size="xl" ring />
+          {/* プロフィールでは、トモコレの住人のように全身で立たせる */}
+          <div
+            className="flex h-32 w-24 shrink-0 items-end justify-center overflow-hidden rounded-2xl md:h-36 md:w-28"
+            style={{
+              background: `color-mix(in oklch, ${colorHex(favoriteColorOptions, a.avatar.favoriteColor)} 18%, white)`,
+            }}
+          >
+            <AvatarFigure
+              avatar={a.avatar}
+              variant="full"
+              className="h-full"
+              title={`${a.displayName}の見た目`}
+            />
+          </div>
           <div className="grid flex-1 grid-cols-3 gap-1">
             <Stat value={a.age} label="歳" />
             <Stat value={a.closeAgents.length} label="親しい人" />
@@ -64,6 +80,19 @@ function AgentPage() {
             )}
           </div>
         )}
+        {a.isMine && (
+          <Link
+            to="/avatar"
+            className={buttonVariants({
+              variant: "secondary",
+              size: "sm",
+              className: "mt-4 w-full",
+            })}
+          >
+            <Palette />
+            見た目を編集
+          </Link>
+        )}
         <div className="scrollbar-none -mx-4 mt-4 flex gap-1.5 overflow-x-auto px-4">
           {a.hobbies.map((hobby) => (
             <span
@@ -98,7 +127,7 @@ function AgentPage() {
             params={{ agentId: a.partner.id }}
             className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/60"
           >
-            <AgentAvatar id={a.partner.id} name={a.partner.displayName} size="md" ring badge="❤️" />
+            <AgentAvatar id={a.partner.id} avatar={a.partner.avatar} size="md" ring badge="❤️" />
             <span className="flex-1 text-sm">
               <span className="font-semibold">{a.partner.displayName}</span>と付き合っています
             </span>
@@ -120,7 +149,7 @@ function AgentPage() {
                     params={{ agentId: c.id }}
                     className="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/60 active:bg-muted"
                   >
-                    <AgentAvatar id={c.id} name={c.displayName} size="md" />
+                    <AgentAvatar id={c.id} avatar={c.avatar} size="md" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold">{c.displayName}</p>
                       <p className="text-[13px] text-muted-foreground">

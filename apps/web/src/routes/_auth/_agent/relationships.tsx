@@ -58,7 +58,7 @@ function RelationshipsPage() {
                 params={{ agentId: admirer.id }}
                 className="flex w-[72px] shrink-0 flex-col items-center gap-1.5"
               >
-                <AgentAvatar id={admirer.id} name={admirer.displayName} size="lg" ring />
+                <AgentAvatar id={admirer.id} avatar={admirer.avatar} size="lg" ring />
                 <span className="w-full truncate text-center text-xs">{admirer.displayName}</span>
               </Link>
             ))}
@@ -91,7 +91,7 @@ function RelationshipsPage() {
                   >
                     <AgentAvatar
                       id={item.agent.id}
-                      name={item.agent.displayName}
+                      avatar={item.agent.avatar}
                       size="lg"
                       badge={STATE_LABELS[item.state]?.emoji}
                     />

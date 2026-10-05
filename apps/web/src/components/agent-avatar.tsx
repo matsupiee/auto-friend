@@ -1,10 +1,9 @@
+import { colorHex, favoriteColorOptions } from "@auto-friend/avatar/avatar-parts";
+import type { Avatar } from "@auto-friend/avatar/avatar-schema";
+import { generateAvatarFromSeed } from "@auto-friend/avatar/generate-avatar-from-seed";
 import { cn } from "@auto-friend/ui/lib/utils";
 
-function hueOf(seed: string): number {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  return hash % 360;
-}
+import { AvatarFigure } from "./avatar/avatar-figure";
 
 const SIZES = {
   xs: "size-7 text-[11px]",
@@ -22,36 +21,33 @@ const BADGE_SIZES = {
   xl: "size-7 text-sm",
 } as const;
 
-// 画像の代わりに、名前の頭文字と id から決まる色でアバターを描く。
+// エージェントの似顔絵（胸から上）を丸く切り抜いて描く。背景は好きな色をうすくしたもの。
+// avatar を渡さないとき（紹介用のサンプルなど）は、id から決まる見た目にする。
 // ring を付けるとストーリーズ風のグラデーションリング、badge を付けると右下に小さなバッジを重ねる。
 export function AgentAvatar({
   id,
-  name,
+  avatar,
   size = "md",
   ring = false,
   badge,
   className,
 }: {
   id: string;
-  name: string;
+  avatar?: Avatar;
   size?: keyof typeof SIZES;
   ring?: boolean;
   badge?: React.ReactNode;
   className?: string;
 }) {
-  const hue = hueOf(id);
+  const look = avatar ?? generateAvatarFromSeed(id);
+  const tint = colorHex(favoriteColorOptions, look.favoriteColor);
   const face = (
     <div
       aria-hidden
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-full font-semibold text-white select-none",
-        SIZES[size],
-      )}
-      style={{
-        background: `linear-gradient(140deg, oklch(0.8 0.11 ${hue}), oklch(0.62 0.15 ${(hue + 35) % 360}))`,
-      }}
+      className={cn("shrink-0 overflow-hidden rounded-full select-none", SIZES[size])}
+      style={{ background: `color-mix(in oklch, ${tint} 22%, white)` }}
     >
-      {Array.from(name)[0]?.toUpperCase()}
+      <AvatarFigure avatar={look} viewBox="14 18 172 172" className="size-full" />
     </div>
   );
 

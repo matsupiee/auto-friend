@@ -61,7 +61,7 @@ function HomeComponent() {
           <div className="scrollbar-none flex gap-3 overflow-x-hidden px-4 py-3">
             {SAMPLE_STORIES.map((name) => (
               <div key={name} className="flex w-14 shrink-0 flex-col items-center gap-1">
-                <AgentAvatar id={`story-${name}`} name={name} size="lg" ring />
+                <AgentAvatar id={`story-${name}`} size="lg" ring />
                 <span className="w-full truncate text-center text-[11px]">{name}</span>
               </div>
             ))}

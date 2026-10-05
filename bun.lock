@@ -99,6 +99,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@auto-friend/api": "workspace:*",
+        "@auto-friend/avatar": "workspace:*",
         "@auto-friend/ui": "workspace:*",
         "@tailwindcss/vite": "^4.3.3",
         "@tanstack/react-form": "catalog:",
@@ -137,6 +138,7 @@
       "name": "@auto-friend/api",
       "dependencies": {
         "@auto-friend/auth": "workspace:*",
+        "@auto-friend/avatar": "workspace:*",
         "@auto-friend/db": "workspace:*",
         "@trpc/client": "catalog:",
         "@trpc/server": "catalog:",
@@ -164,6 +166,16 @@
         "typescript": "^6.0.3",
       },
     },
+    "packages/avatar": {
+      "name": "@auto-friend/avatar",
+      "dependencies": {
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@auto-friend/config": "workspace:*",
+        "typescript": "^6.0.3",
+      },
+    },
     "packages/config": {
       "name": "@auto-friend/config",
       "version": "0.0.0",
@@ -171,6 +183,7 @@
     "packages/db": {
       "name": "@auto-friend/db",
       "dependencies": {
+        "@auto-friend/avatar": "workspace:*",
         "@libsql/client": "0.18.0",
         "@paralleldrive/cuid2": "^3.3.0",
         "drizzle-orm": "catalog:",
@@ -239,6 +252,8 @@
     "@auto-friend/api": ["@auto-friend/api@workspace:packages/api"],
 
     "@auto-friend/auth": ["@auto-friend/auth@workspace:packages/auth"],
+
+    "@auto-friend/avatar": ["@auto-friend/avatar@workspace:packages/avatar"],
 
     "@auto-friend/config": ["@auto-friend/config@workspace:packages/config"],
 

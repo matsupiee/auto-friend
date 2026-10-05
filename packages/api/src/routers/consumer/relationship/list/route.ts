@@ -1,4 +1,5 @@
 import { relationshipStates } from "@auto-friend/db/constants/agent-parameters";
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
 import z from "zod";
 
 import { protectedProcedure } from "../../../../index";
@@ -9,6 +10,7 @@ const relationshipItemSchema = z.object({
     id: z.string(),
     displayName: z.string(),
     gender: z.enum(["male", "female", "other"]),
+    avatar: avatarSchema,
   }),
   state: z.enum(relationshipStates),
   attraction: z.number(),
@@ -32,6 +34,7 @@ const relationshipListOutputSchema = z.object({
       id: z.string(),
       displayName: z.string(),
       gender: z.enum(["male", "female", "other"]),
+      avatar: avatarSchema,
     }),
   ),
 });

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { buildAgentInput } from "../../../../testing/build-agent-input";
+import { buildAvatar } from "../../../../testing/build-avatar";
 import { createTestDb } from "../../../../testing/create-test-db";
 import { createTestUserContext } from "../../../../testing/create-test-user-context";
 import { seedTestWorld } from "../../../../testing/seed-test-world";
@@ -28,6 +29,7 @@ describe("agent.getMine", () => {
     expect(result?.todayLikeCount).toBeGreaterThanOrEqual(8);
     expect(result?.totalLikeCount).toBe(result?.todayLikeCount);
     expect(result?.partner).toBeNull();
+    expect(result?.avatar).toEqual(buildAvatar());
   });
 
   test("ほかのユーザーのエージェントは返さない", async () => {

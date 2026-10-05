@@ -25,6 +25,10 @@ describe("feed.getDay", () => {
     const minutes = result.events.map((e) => e.minuteOfDay);
     expect(minutes).toEqual([...minutes].sort((a, b) => a - b));
     expect(result.diary.length).toBeGreaterThan(0);
+    // 相手のいる出来事には、相手の見た目がつく
+    const withCounterpart = result.events.filter((e) => e.counterpart);
+    expect(withCounterpart.length).toBeGreaterThan(0);
+    for (const e of withCounterpart) expect(e.counterpart?.avatar.face.shape).toBeDefined();
   });
 
   test("相手が自分を好きになった出来事は、名前を伏せて見せる", async () => {

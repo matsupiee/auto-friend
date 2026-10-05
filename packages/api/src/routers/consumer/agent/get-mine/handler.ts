@@ -5,6 +5,7 @@ import { and, count, eq, inArray } from "drizzle-orm";
 
 import type { ProtectedContext } from "../../../../context";
 import { getCurrentDay } from "../../../../shared/agent/get-current-day";
+import { resolveAvatar } from "../../../../shared/agent/resolve-avatar";
 
 export async function handler({ ctx }: { ctx: ProtectedContext }) {
   const [mine] = await ctx.db
@@ -38,6 +39,7 @@ export async function handler({ ctx }: { ctx: ProtectedContext }) {
     id: mine.id,
     displayName: mine.displayName,
     gender: mine.gender,
+    avatar: resolveAvatar(mine),
     joinedDay: mine.joinedDay,
     currentDay,
     todayLikeCount: today?.value ?? 0,

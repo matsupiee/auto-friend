@@ -1,3 +1,4 @@
+import type { Avatar } from "@auto-friend/avatar/avatar-schema";
 import { hashPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 
@@ -50,6 +51,34 @@ const basePreference = {
   adventure: 0.5,
   creativity: 0.6,
   sociality: 0.5,
+};
+
+// デモユーザーの見た目。ストーリーの確認で毎回同じ顔になるよう固定する
+const haruAvatar: Avatar = {
+  face: { shape: "oval", skinColor: "natural", cheek: "none" },
+  hair: { style: "mash", color: "darkBrown", flip: false },
+  eyebrow: { style: "natural", color: "darkBrown", y: 0, size: 0, rotation: 0, spacing: 0 },
+  eye: { style: "round", color: "brown", y: 0, size: 0, rotation: 0, spacing: 0 },
+  nose: { style: "curve", y: 0, size: 0 },
+  mouth: { style: "smile", color: "natural", y: 0, size: 0 },
+  facialHair: { mustache: "none", beard: "none", color: "darkBrown" },
+  glasses: { style: "round", color: "black", size: 0 },
+  mole: { visible: false, x: 0, y: 0 },
+  body: { height: 62, build: 45 },
+  favoriteColor: "blue",
+};
+const minaAvatar: Avatar = {
+  face: { shape: "round", skinColor: "light", cheek: "blush" },
+  hair: { style: "long", color: "brown", flip: false },
+  eyebrow: { style: "thin", color: "brown", y: 0, size: 0, rotation: 0, spacing: 0 },
+  eye: { style: "lashes", color: "brown", y: 0, size: 1, rotation: 0, spacing: 0 },
+  nose: { style: "dot", y: 0, size: 0 },
+  mouth: { style: "lips", color: "pink", y: 0, size: -1 },
+  facialHair: { mustache: "none", beard: "none", color: "brown" },
+  glasses: { style: "none", color: "black", size: 0 },
+  mole: { visible: true, x: 4, y: 2 },
+  body: { height: 42, build: 40 },
+  favoriteColor: "pink",
 };
 
 async function createLoginUser(db: Database, email: string, name: string): Promise<string> {
@@ -124,6 +153,7 @@ export async function createDemoUsers(
         isSakura: false,
         displayName: "ハル",
         gender: "male",
+        avatar: haruAvatar,
         romanticPreference: ["female"],
         birthDate: "2001-04-12",
         birthplace: "神奈川県",
@@ -265,6 +295,7 @@ export async function createDemoUsers(
         isSakura: false,
         displayName: "ミナ",
         gender: "female",
+        avatar: minaAvatar,
         romanticPreference: ["male"],
         birthDate: "1999-11-03",
         birthplace: "大阪府",

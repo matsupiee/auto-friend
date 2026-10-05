@@ -5,6 +5,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 import type { ProtectedContext } from "../../../../context";
 import { getMyAgentOrThrow } from "../../../../shared/agent/get-my-agent-or-throw";
+import { resolveAvatar } from "../../../../shared/agent/resolve-avatar";
 
 const GROUP_KEYS = ["partner", "crush", "interested", "friend", "acquaintance", "ex"] as const;
 
@@ -17,6 +18,7 @@ export async function handler({ ctx }: { ctx: ProtectedContext }) {
       agentId: agent.id,
       displayName: agent.displayName,
       gender: agent.gender,
+      avatar: agent.avatar,
       state: relationship.state,
       attraction: relationship.attraction,
       trust: relationship.trust,
@@ -37,7 +39,12 @@ export async function handler({ ctx }: { ctx: ProtectedContext }) {
     .where(eq(relationship.sourceAgentId, me.id));
 
   const items = rows.map((row) => ({
-    agent: { id: row.agentId, displayName: row.displayName, gender: row.gender },
+    agent: {
+      id: row.agentId,
+      displayName: row.displayName,
+      gender: row.gender,
+      avatar: resolveAvatar({ id: row.agentId, gender: row.gender, avatar: row.avatar }),
+    },
     state: row.state,
     attraction: Math.round(row.attraction),
     trust: Math.round(row.trust),
@@ -64,12 +71,18 @@ export async function handler({ ctx }: { ctx: ProtectedContext }) {
 
   // 念のため、相手からのいいねがあるのに自分側の行がない場合も拾う
   const incoming = await ctx.db
-    .select({ id: agent.id, displayName: agent.displayName, gender: agent.gender })
+    .select({
+      id: agent.id,
+      displayName: agent.displayName,
+      gender: agent.gender,
+      avatar: agent.avatar,
+    })
     .from(relationship)
     .innerJoin(agent, eq(agent.id, relationship.sourceAgentId))
     .where(and(eq(relationship.targetAgentId, me.id), isNotNull(relationship.likedDay)));
   const known = new Set(items.map((item) => item.agent.id));
-  for (const liker of incoming) if (!known.has(liker.id)) admirers.push(liker);
+  for (const liker of incoming)
+    if (!known.has(liker.id)) admirers.push({ ...liker, avatar: resolveAvatar(liker) });
 
   return { groups, admirers };
 }

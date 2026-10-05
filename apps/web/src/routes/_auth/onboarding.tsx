@@ -1,3 +1,5 @@
+import type { Avatar } from "@auto-friend/avatar/avatar-schema";
+import { generateRandomAvatar } from "@auto-friend/avatar/generate-random-avatar";
 import { Button } from "@auto-friend/ui/components/button";
 import { Input } from "@auto-friend/ui/components/input";
 import { cn } from "@auto-friend/ui/lib/utils";
@@ -8,6 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { PageContainer } from "@/components/app-shell";
+import { AvatarEditor } from "@/components/avatar/avatar-editor";
 import Loader from "@/components/loader";
 import { trpc } from "@/utils/trpc";
 
@@ -21,7 +24,7 @@ export const Route = createFileRoute("/_auth/onboarding")({
 
 type Gender = "male" | "female" | "other";
 
-const STEPS = ["基本情報", "これまでのこと", "10の質問"] as const;
+const STEPS = ["基本情報", "見た目", "これまでのこと", "10の質問"] as const;
 
 function Chip({
   selected,
@@ -130,6 +133,7 @@ function OnboardingPage() {
   const [circle, setCircle] = useState("");
   const [hobbies, setHobbies] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [avatar, setAvatar] = useState<Avatar | null>(null);
 
   const create = useMutation(
     trpc.agent.create.mutationOptions({
@@ -156,8 +160,15 @@ function OnboardingPage() {
     birthplace && schoolType && club && circle && hobbies.length >= 3 && hobbies.length <= 8;
   const step3Valid = data.questions.every((q) => answers[q.id]);
 
-  const submit = () => {
+  // 見た目は性別に合わせた「おまかせ」から始めて、パーツを選んで整えてもらう
+  const goToAvatar = () => {
     if (gender === "") return;
+    setAvatar((current) => current ?? generateRandomAvatar(Math.random, gender));
+    setStep(1);
+  };
+
+  const submit = () => {
+    if (gender === "" || !avatar) return;
     create.mutate({
       displayName: displayName.trim(),
       gender,
@@ -169,6 +180,7 @@ function OnboardingPage() {
       circle: circle as never,
       hobbies: hobbies as never,
       answers,
+      avatar,
     });
   };
 
@@ -250,14 +262,34 @@ function OnboardingPage() {
             />
           </Field>
           <ActionBar>
-            <Button size="lg" className="flex-1" disabled={!step1Valid} onClick={() => setStep(1)}>
+            <Button size="lg" className="flex-1" disabled={!step1Valid} onClick={goToAvatar}>
               次へ
             </Button>
           </ActionBar>
         </div>
       )}
 
-      {step === 1 && (
+      {step === 1 && avatar && (
+        <div className="pt-2">
+          <AvatarEditor
+            value={avatar}
+            onChange={setAvatar}
+            gender={gender === "" ? "other" : gender}
+          />
+          <div className="px-4">
+            <ActionBar>
+              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(0)}>
+                戻る
+              </Button>
+              <Button size="lg" className="flex-1" onClick={() => setStep(2)}>
+                次へ
+              </Button>
+            </ActionBar>
+          </div>
+        </div>
+      )}
+
+      {step === 2 && (
         <div className="space-y-6 px-4 pt-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Select
@@ -297,17 +329,17 @@ function OnboardingPage() {
             </div>
           </Field>
           <ActionBar>
-            <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(0)}>
+            <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(1)}>
               戻る
             </Button>
-            <Button size="lg" className="flex-1" disabled={!step2Valid} onClick={() => setStep(2)}>
+            <Button size="lg" className="flex-1" disabled={!step2Valid} onClick={() => setStep(3)}>
               次へ
             </Button>
           </ActionBar>
         </div>
       )}
 
-      {step === 2 && (
+      {step === 3 && (
         <div className="pt-2">
           {data.questions.map((question, index) => (
             <section key={question.id} className="border-b px-4 py-5 last-of-type:border-b-0">
@@ -342,7 +374,7 @@ function OnboardingPage() {
           ))}
           <div className="px-4">
             <ActionBar>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(1)}>
+              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(2)}>
                 戻る
               </Button>
               <Button

@@ -21,6 +21,9 @@ describe("relationship.list", () => {
     const acquaintances = result.groups.find((g) => g.key === "acquaintance")?.items ?? [];
     expect(acquaintances.length).toBeGreaterThanOrEqual(3);
     expect(result.admirers.length).toBeGreaterThan(0);
+    // 一覧の相手には、それぞれの見た目がつく
+    expect(acquaintances.every((item) => item.agent.avatar.hair.style)).toBe(true);
+    expect(result.admirers.every((admirer) => admirer.avatar.hair.style)).toBe(true);
   });
 
   test("交際中の相手は partner グループに入る", async () => {
