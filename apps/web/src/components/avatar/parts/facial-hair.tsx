@@ -27,7 +27,7 @@ export const beards: Record<BeardStyleId, { d: string; opacity: number; stroke?:
     chinstrap: {
       d: "M42 112 C44 152 70 177 100 177 C130 177 156 152 158 112",
       opacity: 1,
-      stroke: 4.4,
+      stroke: 3,
     },
     full: {
       d: "M42 120 C42 164 70 184 100 184 C130 184 158 164 158 120 C152 140 136 150 122 146 C112 142 88 142 78 146 C64 150 48 140 42 120 Z",
