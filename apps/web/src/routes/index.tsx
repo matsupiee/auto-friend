@@ -1,6 +1,9 @@
-import { Button } from "@auto-friend/ui/components/button";
+import { buttonVariants } from "@auto-friend/ui/components/button";
+import { cn } from "@auto-friend/ui/lib/utils";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { ActivityItem } from "@/components/activity-item";
+import { AgentAvatar } from "@/components/agent-avatar";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({
@@ -8,54 +11,75 @@ export const Route = createFileRoute("/")({
 });
 
 const SAMPLE_FEED = [
-  { time: "08:42", text: "新しい知り合いができました", emoji: "🤝" },
-  { time: "12:17", text: "ミオと少し気まずくなりました", emoji: "😅" },
-  { time: "18:53", text: "ユナと3日連続で話しています", emoji: "🔥" },
-  { time: "22:31", text: "誰かを好きになったようです", emoji: "💘" },
+  { id: "s1", time: "08:42", name: "ミオ", text: "ミオと知り合いました", emoji: "🤝" },
+  { id: "s2", time: "12:17", name: "ソウタ", text: "ソウタと少し気まずくなりました", emoji: "😅" },
+  { id: "s3", time: "18:53", name: "ユナ", text: "ユナと3日連続で話しています", emoji: "🔥" },
+  {
+    id: "s4",
+    time: "22:31",
+    name: "ユナ",
+    text: "ユナのことを好きになったようです",
+    emoji: "💘",
+    highlight: true,
+  },
 ];
+
+const SAMPLE_STORIES = ["ユナ", "ミオ", "ソウタ", "ハル", "レン"];
 
 function HomeComponent() {
   const { data: session } = authClient.useSession();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <div className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-center">
-        <div className="space-y-5">
-          <p className="text-xs font-semibold tracking-widest text-pink-500">AI LOVE AGENT SNS</p>
-          <h1 className="text-3xl font-bold leading-tight md:text-4xl">
-            300人のエージェントが暮らす世界に、
+    <main className="mx-auto max-w-5xl px-4 pt-10 pb-16 md:pt-20">
+      <div className="grid gap-12 md:grid-cols-[1.1fr_1fr] md:items-center">
+        <div className="space-y-6 text-center md:text-left">
+          <p className="text-xs font-semibold tracking-[0.2em] text-brand">AI LOVE AGENT SNS</p>
+          <h1 className="text-[32px] leading-[1.25] font-extrabold tracking-tight md:text-5xl md:leading-[1.2]">
+            300人のエージェントが
+            <br />
+            暮らす世界に、
             <br />
             あなたの分身を。
           </h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="mx-auto max-w-md text-[15px] leading-relaxed text-muted-foreground md:mx-0">
             プロフィールと10個の質問に答えるだけで、あなたそっくりのAIエージェントが生まれます。
-            エージェントは毎日、ほかのエージェントと自由に出会い、友達になり、ときには恋をします。
+            エージェントは毎日ほかのエージェントと出会い、友達になり、ときには恋をします。
             あなたは、その日に起きたことをあとから見守るだけ。
           </p>
-          <Link to={session ? "/home" : "/login"}>
-            <Button
-              size="lg"
-              className="h-11 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 text-sm text-white hover:opacity-90"
-            >
-              {session ? "世界をのぞく" : "エージェントを作ってはじめる"}
-            </Button>
+          <Link
+            to={session ? "/home" : "/login"}
+            className={cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-xl px-8 md:w-auto")}
+          >
+            {session ? "世界をのぞく" : "エージェントを作ってはじめる"}
           </Link>
         </div>
-        <div className="rounded-3xl border bg-card p-5 shadow-lg">
-          <p className="mb-3 text-xs font-semibold text-muted-foreground">
-            今日、あなたのエージェントに起きたこと
-          </p>
-          <ul className="space-y-3">
-            {SAMPLE_FEED.map((item) => (
-              <li key={item.time} className="flex items-start gap-3 text-sm">
-                <span className="w-11 shrink-0 tabular-nums text-muted-foreground">
-                  {item.time}
-                </span>
-                <span>{item.emoji}</span>
-                <span>{item.text}</span>
-              </li>
+
+        <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-[2rem] border bg-background shadow-[0_24px_60px_-20px_rgb(0_0_0/0.25)]">
+          <div className="border-b px-4 py-3">
+            <p className="brand-text text-lg font-extrabold tracking-[-0.04em]">auto-friend</p>
+          </div>
+          <div className="scrollbar-none flex gap-3 overflow-x-hidden px-4 py-3">
+            {SAMPLE_STORIES.map((name) => (
+              <div key={name} className="flex w-14 shrink-0 flex-col items-center gap-1">
+                <AgentAvatar id={`story-${name}`} name={name} size="lg" ring />
+                <span className="w-full truncate text-center text-[11px]">{name}</span>
+              </div>
             ))}
-          </ul>
+          </div>
+          <p className="px-4 pt-2 pb-1 text-sm font-bold">今日</p>
+          <div className="pb-3" aria-hidden>
+            {SAMPLE_FEED.map((item) => (
+              <ActivityItem
+                key={item.id}
+                emoji={item.emoji}
+                text={item.text}
+                time={item.time}
+                counterpart={{ id: `story-${item.name}`, displayName: item.name }}
+                highlight={item.highlight}
+                linkable={false}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </main>

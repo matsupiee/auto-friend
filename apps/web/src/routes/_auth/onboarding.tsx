@@ -3,11 +3,12 @@ import { Input } from "@auto-friend/ui/components/input";
 import { cn } from "@auto-friend/ui/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { PageContainer } from "@/components/app-shell";
 import Loader from "@/components/loader";
-import { Section } from "@/components/section";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_auth/onboarding")({
@@ -37,10 +38,13 @@ function Chip({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "rounded-full border px-3 py-1.5 text-xs transition-colors",
-        selected ? "border-pink-500 bg-pink-500 text-white" : "bg-background hover:bg-muted",
+        "inline-flex h-9 items-center gap-1 rounded-full border px-4 text-sm font-medium transition-colors",
+        selected
+          ? "border-foreground bg-foreground text-background"
+          : "bg-background hover:bg-muted",
       )}
     >
+      {selected && <Check className="-ml-1 size-3.5" strokeWidth={3} />}
       {children}
     </button>
   );
@@ -56,9 +60,9 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <div className="flex items-baseline justify-between">
-        <span className="text-sm font-medium">{label}</span>
+        <span className="text-sm font-semibold">{label}</span>
         {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
       </div>
       {children}
@@ -79,20 +83,35 @@ function Select({
 }) {
   return (
     <Field label={label}>
-      <select
-        aria-label={label}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-9 w-full rounded-md border bg-background px-2 text-sm"
-      >
-        <option value="">選択してください</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          aria-label={label}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn(
+            "h-11 w-full appearance-none rounded-xl border border-input bg-muted/60 pr-10 pl-3.5 text-base outline-none transition-colors focus-visible:border-foreground/30 focus-visible:bg-background md:text-sm",
+            !value && "text-muted-foreground",
+          )}
+        >
+          <option value="">選択してください</option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+      </div>
     </Field>
+  );
+}
+
+// 画面下に固定する「戻る / 次へ」のボタン列
+function ActionBar({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-0 -mx-4 flex gap-2 border-t bg-background/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
+      {children}
+    </div>
   );
 }
 
@@ -154,31 +173,33 @@ function OnboardingPage() {
   };
 
   return (
-    <main className="mx-auto max-w-2xl space-y-4 px-4 py-6">
-      <div>
-        <h1 className="text-xl font-bold">あなたのエージェントを作る</h1>
-        <p className="mt-1 text-xs text-muted-foreground">
+    <PageContainer className="max-w-[560px]">
+      <div className="px-4 pt-5 pb-2">
+        <ol className="flex gap-1" aria-label="進み具合">
+          {STEPS.map((label, index) => (
+            <li
+              key={label}
+              aria-current={index === step ? "step" : undefined}
+              className={cn(
+                "h-1 flex-1 rounded-full transition-colors",
+                index <= step ? "bg-foreground" : "bg-muted",
+              )}
+            >
+              <span className="sr-only">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-4 text-[13px] font-semibold text-muted-foreground">
+          ステップ {step + 1}/{STEPS.length} ・ {STEPS[step]}
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight">あなたのエージェントを作る</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           自己紹介文はいりません。選ぶだけで、あなたらしいエージェントが生まれます。
         </p>
       </div>
-      <ol className="flex gap-2 text-xs">
-        {STEPS.map((label, index) => (
-          <li
-            key={label}
-            className={cn(
-              "flex-1 rounded-full border px-3 py-1 text-center",
-              index === step
-                ? "border-pink-500 font-semibold text-pink-600"
-                : "text-muted-foreground",
-            )}
-          >
-            {index + 1}. {label}
-          </li>
-        ))}
-      </ol>
 
       {step === 0 && (
-        <Section className="space-y-5">
+        <div className="space-y-6 px-4 pt-4">
           <Field label="エージェントの名前" hint="12文字まで">
             <Input
               aria-label="エージェントの名前"
@@ -228,14 +249,16 @@ function OnboardingPage() {
               onChange={(e) => setBirthDate(e.target.value)}
             />
           </Field>
-          <Button className="w-full" disabled={!step1Valid} onClick={() => setStep(1)}>
-            次へ
-          </Button>
-        </Section>
+          <ActionBar>
+            <Button size="lg" className="flex-1" disabled={!step1Valid} onClick={() => setStep(1)}>
+              次へ
+            </Button>
+          </ActionBar>
+        </div>
       )}
 
       {step === 1 && (
-        <Section className="space-y-5">
+        <div className="space-y-6 px-4 pt-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Select
               label="出身"
@@ -273,21 +296,25 @@ function OnboardingPage() {
               ))}
             </div>
           </Field>
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={() => setStep(0)}>
+          <ActionBar>
+            <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(0)}>
               戻る
             </Button>
-            <Button className="flex-1" disabled={!step2Valid} onClick={() => setStep(2)}>
+            <Button size="lg" className="flex-1" disabled={!step2Valid} onClick={() => setStep(2)}>
               次へ
             </Button>
-          </div>
-        </Section>
+          </ActionBar>
+        </div>
       )}
 
       {step === 2 && (
-        <div className="space-y-3">
+        <div className="pt-2">
           {data.questions.map((question, index) => (
-            <Section key={question.id} title={`Q${index + 1}. ${question.text}`}>
+            <section key={question.id} className="border-b px-4 py-5 last-of-type:border-b-0">
+              <p className="text-xs font-semibold text-muted-foreground">
+                Q{index + 1}/{data.questions.length}
+              </p>
+              <h2 className="mt-1 mb-3 text-[15px] leading-snug font-bold">{question.text}</h2>
               <div className="grid gap-2 sm:grid-cols-2">
                 {question.options.map((option) => (
                   <button
@@ -298,32 +325,38 @@ function OnboardingPage() {
                       setAnswers((current) => ({ ...current, [question.id]: option.id }))
                     }
                     className={cn(
-                      "rounded-xl border px-3 py-2 text-left text-sm transition-colors",
+                      "flex min-h-12 items-center justify-between gap-2 rounded-xl border px-4 py-3 text-left text-sm transition-colors",
                       answers[question.id] === option.id
-                        ? "border-pink-500 bg-pink-50 dark:bg-pink-950/40"
-                        : "hover:bg-muted",
+                        ? "border-foreground bg-muted font-semibold"
+                        : "hover:bg-muted/60",
                     )}
                   >
                     {option.label}
+                    {answers[question.id] === option.id && (
+                      <Check className="size-4 shrink-0" strokeWidth={3} />
+                    )}
                   </button>
                 ))}
               </div>
-            </Section>
+            </section>
           ))}
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>
-              戻る
-            </Button>
-            <Button
-              className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white"
-              disabled={!step3Valid || create.isPending}
-              onClick={submit}
-            >
-              {create.isPending ? "世界に送り出しています..." : "この子を世界に送り出す"}
-            </Button>
+          <div className="px-4">
+            <ActionBar>
+              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setStep(1)}>
+                戻る
+              </Button>
+              <Button
+                size="lg"
+                className="flex-[2]"
+                disabled={!step3Valid || create.isPending}
+                onClick={submit}
+              >
+                {create.isPending ? "世界に送り出しています..." : "この子を世界に送り出す"}
+              </Button>
+            </ActionBar>
           </div>
         </div>
       )}
-    </main>
+    </PageContainer>
   );
 }
