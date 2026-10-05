@@ -12,16 +12,19 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:deploy": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "bun src/seed/seed-world.ts"
   },
   "dependencies": {
     "@libsql/client": "0.18.0",
+    "@paralleldrive/cuid2": "^3.3.0",
     "drizzle-orm": "catalog:",
     "libsql": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@auto-friend/config": "workspace:*",
+    "better-auth": "catalog:",
     "drizzle-kit": "1.0.0-rc.4",
     "typescript": "^6.0.3",
     "varlock": "catalog:"

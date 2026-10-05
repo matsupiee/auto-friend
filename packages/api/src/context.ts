@@ -5,3 +5,5 @@ export type Context = {
   session: Session | null;
   db: Database;
 };
+
+export type ProtectedContext = Context & { session: Session };

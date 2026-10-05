@@ -13,3 +13,8 @@ export function createDb(env: DatabaseConfig) {
 }
 
 export type Database = ReturnType<typeof createDb>;
+
+export type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
+
+// トランザクションの内外どちらからでも呼べる関数の引数に使う
+export type DbExecutor = Database | Transaction;

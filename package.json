@@ -40,6 +40,7 @@
     "db:generate": "turbo run db:generate -F @auto-friend/db --",
     "db:migrate": "turbo run db:migrate -F @auto-friend/db --",
     "db:local": "turbo run db:local -F @auto-friend/db --",
+    "db:seed": "turbo run db:seed -F @auto-friend/db --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
     "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
     "auth:generate": "cd apps/server && bun run auth:generate",
