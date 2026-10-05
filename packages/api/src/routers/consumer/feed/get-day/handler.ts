@@ -6,6 +6,7 @@ import type z from "zod";
 import type { ProtectedContext } from "../../../../context";
 import { getCurrentDay } from "../../../../shared/agent/get-current-day";
 import { getMyAgentOrThrow } from "../../../../shared/agent/get-my-agent-or-throw";
+import { resolveAvatar } from "../../../../shared/agent/resolve-avatar";
 import { renderEventText } from "../../../../shared/event/render-event-text";
 import type { feedGetDayInputSchema } from "./route";
 
@@ -131,17 +132,26 @@ export async function handler({
     if (e.targetAgentId) ids.add(e.targetAgentId);
     if (e.payload.thirdAgentId) ids.add(e.payload.thirdAgentId);
   }
-  const names = new Map(
+  const agents = new Map(
     ids.size === 0
       ? []
       : (
           await ctx.db
-            .select({ id: agent.id, displayName: agent.displayName })
+            .select({
+              id: agent.id,
+              displayName: agent.displayName,
+              gender: agent.gender,
+              avatar: agent.avatar,
+            })
             .from(agent)
             .where(inArray(agent.id, [...ids]))
-        ).map((a) => [a.id, a.displayName]),
+        ).map((a) => [a.id, a]),
   );
-  const nameOf = (id: string) => names.get(id) ?? "誰か";
+  const nameOf = (id: string) => agents.get(id)?.displayName ?? "誰か";
+  const counterpartOf = (id: string) => {
+    const found = agents.get(id);
+    return found ? { id, displayName: found.displayName, avatar: resolveAvatar(found) } : null;
+  };
 
   const items = events.flatMap((e) => {
     const text = renderEventText(e, me.id, nameOf);
@@ -155,10 +165,7 @@ export async function handler({
         type: e.type,
         text,
         importance: e.importance,
-        counterpart:
-          counterpartId && !hidden
-            ? { id: counterpartId, displayName: nameOf(counterpartId) }
-            : null,
+        counterpart: counterpartId && !hidden ? counterpartOf(counterpartId) : null,
       },
     ];
   });

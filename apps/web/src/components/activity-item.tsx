@@ -1,5 +1,6 @@
 import { cn } from "@auto-friend/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
+import type { Avatar } from "@auto-friend/avatar/avatar-schema";
 
 import { AgentAvatar, EmojiAvatar } from "./agent-avatar";
 
@@ -30,7 +31,7 @@ export function ActivityItem({
   emoji: string;
   text: string;
   time: string;
-  counterpart?: { id: string; displayName: string } | null;
+  counterpart?: { id: string; displayName: string; avatar?: Avatar } | null;
   highlight?: boolean;
   // false にすると相手のページへのリンクにしない（紹介用のサンプル表示など）
   linkable?: boolean;
@@ -40,7 +41,7 @@ export function ActivityItem({
       {counterpart ? (
         <AgentAvatar
           id={counterpart.id}
-          name={counterpart.displayName}
+          avatar={counterpart.avatar}
           size="md"
           ring={highlight}
           badge={emoji}

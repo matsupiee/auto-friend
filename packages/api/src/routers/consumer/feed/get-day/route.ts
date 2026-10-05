@@ -1,4 +1,5 @@
 import { agentEventTypes } from "@auto-friend/db/constants/agent-parameters";
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
 import z from "zod";
 
 import { protectedProcedure } from "../../../../index";
@@ -17,7 +18,9 @@ const feedGetDayOutputSchema = z.object({
       type: z.enum(agentEventTypes),
       text: z.string(),
       importance: z.number(),
-      counterpart: z.object({ id: z.string(), displayName: z.string() }).nullable(),
+      counterpart: z
+        .object({ id: z.string(), displayName: z.string(), avatar: avatarSchema })
+        .nullable(),
     }),
   ),
   stats: z.object({ likes: z.number(), newAcquaintances: z.number(), conversations: z.number() }),

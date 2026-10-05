@@ -1,4 +1,5 @@
 import { relationshipStates } from "@auto-friend/db/constants/agent-parameters";
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
 import z from "zod";
 
 import { protectedProcedure } from "../../../../index";
@@ -15,6 +16,7 @@ const agentGetOutputSchema = z.object({
   isMine: z.boolean(),
   displayName: z.string(),
   gender: z.enum(["male", "female", "other"]),
+  avatar: avatarSchema,
   age: z.number(),
   birthplace: z.string(),
   schoolType: z.string(),
@@ -25,9 +27,14 @@ const agentGetOutputSchema = z.object({
   // 恋愛傾向は自分のエージェントのときだけ返す
   romance: parameterSchema.nullable(),
   mood: z.object({ emoji: z.string(), label: z.string() }),
-  partner: z.object({ id: z.string(), displayName: z.string() }).nullable(),
+  partner: z.object({ id: z.string(), displayName: z.string(), avatar: avatarSchema }).nullable(),
   closeAgents: z.array(
-    z.object({ id: z.string(), displayName: z.string(), state: z.enum(relationshipStates) }),
+    z.object({
+      id: z.string(),
+      displayName: z.string(),
+      avatar: avatarSchema,
+      state: z.enum(relationshipStates),
+    }),
   ),
   recentInterests: z.array(z.string()),
   // 自分のエージェントから見た、この相手との関係（他人のときのみ）

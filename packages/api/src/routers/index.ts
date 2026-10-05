@@ -3,6 +3,7 @@ import { agentCreateRoute } from "./consumer/agent/create/route";
 import { agentGetRoute } from "./consumer/agent/get/route";
 import { agentGetMineRoute } from "./consumer/agent/get-mine/route";
 import { agentGetOnboardingOptionsRoute } from "./consumer/agent/get-onboarding-options/route";
+import { agentUpdateAvatarRoute } from "./consumer/agent/update-avatar/route";
 import { feedGetDayRoute } from "./consumer/feed/get-day/route";
 import { relationshipListRoute } from "./consumer/relationship/list/route";
 import { worldAdvanceDayRoute } from "./consumer/world/advance-day/route";
@@ -17,6 +18,7 @@ export const appRouter = router({
     create: agentCreateRoute,
     getMine: agentGetMineRoute,
     get: agentGetRoute,
+    updateAvatar: agentUpdateAvatarRoute,
   }),
   relationship: router({
     list: relationshipListRoute,

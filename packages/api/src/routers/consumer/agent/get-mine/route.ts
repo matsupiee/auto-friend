@@ -1,3 +1,4 @@
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
 import z from "zod";
 
 import { protectedProcedure } from "../../../../index";
@@ -8,6 +9,7 @@ const agentGetMineOutputSchema = z
     id: z.string(),
     displayName: z.string(),
     gender: z.enum(["male", "female", "other"]),
+    avatar: avatarSchema,
     joinedDay: z.number(),
     currentDay: z.number(),
     todayLikeCount: z.number(),

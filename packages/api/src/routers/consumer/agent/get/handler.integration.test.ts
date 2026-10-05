@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
+import { agent } from "@auto-friend/db/schema/agent";
 import { relationship } from "@auto-friend/db/schema/relationship";
 import { and, eq } from "drizzle-orm";
 
@@ -65,6 +67,26 @@ describe("agent.get", () => {
         ),
       );
     expect(stored?.state).toBe("crush");
+  });
+
+  test("見た目をまだ持たないエージェントも、開くたびに同じ見た目で返す", async () => {
+    const db = await createTestDb();
+    const sakura = await seedTestWorld(db);
+    const ctx = await createTestUserContext(db);
+    await createAgent({ ctx, input: buildAgentInput() });
+    const someone = sakura[0];
+    if (!someone) throw new Error("seed failed");
+    expect(avatarSchema.safeParse(someone.avatar).success).toBe(true);
+    await db.update(agent).set({ avatar: null }).where(eq(agent.id, someone.id));
+
+    const first = await handler({ ctx, input: { agentId: someone.id } });
+    const second = await handler({ ctx, input: { agentId: someone.id } });
+
+    expect(avatarSchema.safeParse(first.avatar).success).toBe(true);
+    expect(second.avatar).toEqual(first.avatar);
+    for (const close of first.closeAgents) {
+      expect(avatarSchema.safeParse(close.avatar).success).toBe(true);
+    }
   });
 
   test("存在しないエージェントは NOT_FOUND", async () => {

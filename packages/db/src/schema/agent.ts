@@ -1,3 +1,4 @@
+import type { Avatar } from "@auto-friend/avatar/avatar-schema";
 import { createId } from "@paralleldrive/cuid2";
 import { sql } from "drizzle-orm";
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
@@ -36,7 +37,9 @@ export const agent = sqliteTable(
     personality: text("personality", { mode: "json" }).$type<Personality>().notNull(),
     romance: text("romance", { mode: "json" }).$type<Romance>().notNull(),
     preference: text("preference", { mode: "json" }).$type<Preference>().notNull(),
-    // 見た目の魅力度。ユーザーには表示しない内部値。
+    // 見た目（似顔絵）のパーツの組み合わせ。null のときは id から決まる見た目で表示する。
+    avatar: text("avatar", { mode: "json" }).$type<Avatar>(),
+    // 見た目の魅力度。ユーザーには表示しない内部値。avatar とは関係なく決まる。
     appearance: real("appearance").notNull(),
     joinedDay: integer("joined_day").notNull(),
   },

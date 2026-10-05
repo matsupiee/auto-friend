@@ -64,6 +64,7 @@ export async function handler({
         club: input.club,
         circle: input.circle,
         hobbies: input.hobbies,
+        avatar: input.avatar,
         ...parameters,
         appearance: 0.55 + rng.next() * 0.25,
         joinedDay: currentDay,

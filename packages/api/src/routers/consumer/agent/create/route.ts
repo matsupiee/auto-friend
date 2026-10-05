@@ -1,3 +1,4 @@
+import { avatarSchema } from "@auto-friend/avatar/avatar-schema";
 import { genders } from "@auto-friend/db/constants/agent-parameters";
 import {
   circles,
@@ -26,6 +27,7 @@ export const agentCreateInputSchema = z.object({
     .max(8)
     .refine((list) => new Set(list).size === list.length, "同じ趣味が重複しています"),
   answers: z.record(z.string(), z.string()),
+  avatar: avatarSchema,
 });
 
 const agentCreateOutputSchema = z.object({

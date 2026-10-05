@@ -1,3 +1,5 @@
+import { generateAvatarFromSeed } from "@auto-friend/avatar/generate-avatar-from-seed";
+
 import type { Gender } from "../constants/agent-parameters";
 import { personalityKeys, preferenceKeys, romanceKeys } from "../constants/agent-parameters";
 import { circles, clubs, hobbies, prefectures, schoolTypes } from "../constants/profile-options";
@@ -68,11 +70,14 @@ export function generateSakuraAgents(rng: SeedRng, count: number, today: Date): 
     for (const key of rng.sample(preferenceKeys, 2))
       preference[key] = Math.min(0.95, preference[key] + 0.35);
 
+    const displayName = pickName(rng, gender, used);
     agents.push({
       userId: null,
       isSakura: true,
-      displayName: pickName(rng, gender, used),
+      displayName,
       gender,
+      // 見た目は世界の乱数とは別に決める。見た目を変えても、関係や出来事の生成結果は変わらない
+      avatar: generateAvatarFromSeed(`sakura-${i}-${displayName}`, gender),
       romanticPreference: pickRomanticPreference(rng, gender),
       birthDate: birthDateFor(rng, today),
       // 人口の多い地域ほど出やすくする

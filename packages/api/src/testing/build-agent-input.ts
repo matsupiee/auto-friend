@@ -1,4 +1,5 @@
 import { onboardingQuestions } from "../shared/agent/onboarding-questions";
+import { buildAvatar } from "./build-avatar";
 
 // agent.create に渡す、正しい入力の例。テストごとに一部だけ上書きして使う。
 export function buildAgentInput() {
@@ -13,5 +14,6 @@ export function buildAgentInput() {
     circle: "写真サークル" as const,
     hobbies: ["カフェ巡り" as const, "映画" as const, "写真" as const],
     answers: Object.fromEntries(onboardingQuestions.map((q) => [q.id, q.options[0]?.id ?? ""])),
+    avatar: buildAvatar(),
   };
 }

@@ -27,6 +27,9 @@ export async function createAgent(page: Page, name = "ハルキ") {
   await page.getByRole("button", { name: "女性" }).nth(1).click();
   await page.getByLabel("生年月日").fill("2000-05-05");
   await page.getByRole("button", { name: "次へ" }).click();
+  // 見た目はおまかせで作られた状態のまま進む → docs/user-stories/make-avatar.md
+  await page.getByTestId("avatar-preview").waitFor();
+  await page.getByRole("button", { name: "次へ" }).click();
   await page.getByLabel("出身").selectOption("東京都");
   await page.getByLabel("通っていた学校").selectOption("共学の公立高校");
   await page.getByLabel("部活").selectOption("軽音部");

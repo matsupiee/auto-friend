@@ -57,7 +57,7 @@ function HomePage() {
       <div className="px-4 pt-5 pb-4">
         <div className="flex items-center gap-6">
           <Link to="/agents/$agentId" params={{ agentId: me.id }} aria-label="プロフィールを見る">
-            <AgentAvatar id={me.id} name={me.displayName} size="xl" ring />
+            <AgentAvatar id={me.id} avatar={me.avatar} size="xl" ring />
           </Link>
           <div className="grid flex-1 grid-cols-2 gap-2">
             <Stat value={me.todayLikeCount} label="今日のいいね" testId="today-likes" />

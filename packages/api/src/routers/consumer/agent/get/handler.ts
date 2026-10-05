@@ -10,6 +10,7 @@ import type { ProtectedContext } from "../../../../context";
 import { computeAge } from "../../../../shared/agent/compute-age";
 import { getCurrentDay } from "../../../../shared/agent/get-current-day";
 import { getMyAgentOrThrow } from "../../../../shared/agent/get-my-agent-or-throw";
+import { resolveAvatar } from "../../../../shared/agent/resolve-avatar";
 import { renderEventText } from "../../../../shared/event/render-event-text";
 import type { agentGetInputSchema } from "./route";
 
@@ -77,6 +78,8 @@ export async function handler({
       familiarity: relationship.familiarity,
       attraction: relationship.attraction,
       displayName: agent.displayName,
+      gender: agent.gender,
+      avatar: agent.avatar,
     })
     .from(relationship)
     .innerJoin(agent, eq(agent.id, relationship.targetAgentId))
@@ -89,6 +92,7 @@ export async function handler({
     .map((r) => ({
       id: r.targetAgentId,
       displayName: r.displayName,
+      avatar: resolveAvatar({ id: r.targetAgentId, gender: r.gender, avatar: r.avatar }),
       state: isMine ? r.state : publicState(r.state),
     }));
 
@@ -173,6 +177,7 @@ export async function handler({
     isMine,
     displayName: target.displayName,
     gender: target.gender,
+    avatar: resolveAvatar(target),
     age: computeAge(target.birthDate),
     birthplace: target.birthplace,
     schoolType: target.schoolType,
@@ -182,7 +187,17 @@ export async function handler({
     personality: toParameters(target.personality, PERSONALITY_LABELS),
     romance: isMine ? toParameters(target.romance, ROMANCE_LABELS) : null,
     mood: moodOf(latestDayTypes),
-    partner: partner ? { id: partner.targetAgentId, displayName: partner.displayName } : null,
+    partner: partner
+      ? {
+          id: partner.targetAgentId,
+          displayName: partner.displayName,
+          avatar: resolveAvatar({
+            id: partner.targetAgentId,
+            gender: partner.gender,
+            avatar: partner.avatar,
+          }),
+        }
+      : null,
     closeAgents,
     recentInterests:
       recentInterests.length > 0 ? recentInterests.slice(0, 3) : target.hobbies.slice(0, 3),
