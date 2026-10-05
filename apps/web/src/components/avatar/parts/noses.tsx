@@ -1,7 +1,7 @@
 import type { NoseStyleId } from "@auto-friend/avatar/avatar-parts";
 
 // 鼻パーツ。原点中心に描く。かわいく見えるよう小さく控えめにし、半透明の茶色で影をつける。
-const SHADE = "rgba(150, 80, 60, 0.55)";
+const SHADE = "rgba(170, 95, 75, 0.45)";
 const SOFT = "rgba(150, 80, 60, 0.16)";
 
 function line(d: string) {

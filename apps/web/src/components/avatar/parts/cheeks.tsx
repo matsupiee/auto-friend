@@ -6,7 +6,7 @@ type CheekProps = { blushFill: string };
 
 export const cheeks: Record<CheekId, ((props: CheekProps) => React.ReactNode) | null> = {
   none: null,
-  blush: ({ blushFill }) => <ellipse rx={11} ry={7} fill={blushFill} />,
+  blush: ({ blushFill }) => <ellipse rx={13} ry={8} fill={blushFill} />,
   heart: ({ blushFill }) => (
     <>
       <ellipse rx={10} ry={6.4} fill={blushFill} />
@@ -17,17 +17,13 @@ export const cheeks: Record<CheekId, ((props: CheekProps) => React.ReactNode) | 
       />
     </>
   ),
-  freckles: ({ blushFill }) => (
-    <>
-      <ellipse rx={10} ry={6} fill={blushFill} opacity={0.6} />
-      <g fill="rgba(160, 90, 60, 0.5)">
-        <circle cx={-4.4} cy={-1.6} r={0.95} />
-        <circle cx={0} cy={-2.6} r={0.95} />
-        <circle cx={3.8} cy={-0.8} r={0.95} />
-        <circle cx={-1.8} cy={1.8} r={0.95} />
-        <circle cx={2.6} cy={2.6} r={0.95} />
-      </g>
-    </>
+  freckles: () => (
+    <g fill="#c49a85" fillOpacity={0.6}>
+      <circle cx={-3.6} cy={-1.4} r={0.8} />
+      <circle cx={0.4} cy={-2.4} r={0.8} />
+      <circle cx={3.6} cy={-0.6} r={0.8} />
+      <circle cx={-0.8} cy={1.8} r={0.8} />
+    </g>
   ),
   shy: ({ blushFill }) => (
     <>
