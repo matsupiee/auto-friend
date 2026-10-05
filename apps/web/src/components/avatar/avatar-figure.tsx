@@ -93,7 +93,7 @@ function Eye({ shape, ballFill, skin }: { shape: EyeShape; ballFill: string; ski
           <circle
             cx={ball.rx * 0.32}
             cy={-ball.ry * 0.34}
-            r={Math.max(1.4, ball.rx * 0.28)}
+            r={Math.max(1.4, ball.rx * 0.25)}
             fill="white"
           />
         </>
@@ -206,7 +206,15 @@ export function AvatarFigure({
           <stop offset="0" stopColor="rgb(150 80 60)" stopOpacity={0.55} />
           <stop offset="0.75" stopColor="rgb(150 80 60)" stopOpacity={0.06} />
         </linearGradient>
-        <linearGradient id={id("hair")} x1="0" y1="0" x2="0" y2="1">
+        {/* 前髪とはねた毛先で同じ色になるよう、キャンバス上の位置でグラデーションをかける */}
+        <linearGradient
+          id={id("hair")}
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          y1="10"
+          x2="0"
+          y2="200"
+        >
           <stop offset="0" stopColor={shadeColor(hair, -0.1)} />
           <stop offset="0.5" stopColor={hair} />
           <stop offset="1" stopColor={shadeColor(hair, 0.18)} />
@@ -361,6 +369,15 @@ export function AvatarFigure({
 
         {/* 前髪（グラデーション＋ツヤ） → 眉（前髪の上に透けて見えるように） → メガネ */}
         <g transform={hairTransform}>
+          {hairStyle.flicks && (
+            <path
+              d={hairStyle.flicks}
+              fill={url("hair")}
+              stroke={hairLine}
+              strokeWidth={OUTLINE.width}
+              strokeOpacity={OUTLINE.opacity}
+            />
+          )}
           {hairStyle.front && (
             <>
               <path
