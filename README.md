@@ -19,6 +19,20 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Oxlint** - Oxlint + Oxfmt (linting & formatting)
 - **Turborepo** - Optimized monorepo build system
 
+## モックを動かす
+
+AIエージェント恋愛SNSのモック（Web のみ）を手元で動かす手順。
+
+1. `apps/server/.env` と `apps/web/.env` を作る（項目は各ディレクトリの `.env.schema` を参照）。ローカルでは `DATABASE_URL=file:../../local.db` でよい。
+2. `bun install`
+3. `bun run db:push` でスキーマを反映する。
+4. `bun run db:seed` でサクラ300体とデモユーザー2人のいる世界を作る（何度でも作り直せる）。
+   - `demo@auto-friend.test`（片思い中） / `couple@auto-friend.test`（交際中）、パスワードはどちらも `demo-password`
+5. `bun run dev` で起動し、http://localhost:3001 を開く。
+6. テスト
+   - API: `cd packages/api && bun test`
+   - ユーザーストーリーの E2E: `cd apps/web && bun run test:e2e`（実行前に seed が自動で走る）
+
 ## Getting Started
 
 First, install the dependencies:

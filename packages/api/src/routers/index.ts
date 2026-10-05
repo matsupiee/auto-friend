@@ -1,14 +1,32 @@
-import { protectedProcedure, publicProcedure, router } from "../index";
+import { publicProcedure, router } from "../index";
+import { agentCreateRoute } from "./consumer/agent/create/route";
+import { agentGetRoute } from "./consumer/agent/get/route";
+import { agentGetMineRoute } from "./consumer/agent/get-mine/route";
+import { agentGetOnboardingOptionsRoute } from "./consumer/agent/get-onboarding-options/route";
+import { feedGetDayRoute } from "./consumer/feed/get-day/route";
+import { relationshipListRoute } from "./consumer/relationship/list/route";
+import { worldAdvanceDayRoute } from "./consumer/world/advance-day/route";
+import { worldGetStatusRoute } from "./consumer/world/get-status/route";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
   }),
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      user: ctx.session.user,
-    };
+  agent: router({
+    getOnboardingOptions: agentGetOnboardingOptionsRoute,
+    create: agentCreateRoute,
+    getMine: agentGetMineRoute,
+    get: agentGetRoute,
+  }),
+  relationship: router({
+    list: relationshipListRoute,
+  }),
+  feed: router({
+    getDay: feedGetDayRoute,
+  }),
+  world: router({
+    getStatus: worldGetStatusRoute,
+    advanceDay: worldAdvanceDayRoute,
   }),
 });
 export type AppRouter = typeof appRouter;
