@@ -47,7 +47,7 @@ export function AgentAvatar({
       className={cn("shrink-0 overflow-hidden rounded-full select-none", SIZES[size])}
       style={{ background: `color-mix(in oklch, ${tint} 22%, white)` }}
     >
-      <AvatarFigure avatar={look} viewBox="14 18 172 172" className="size-full" />
+      <AvatarFigure avatar={look} viewBox="8 14 184 184" className="size-full" />
     </div>
   );
 

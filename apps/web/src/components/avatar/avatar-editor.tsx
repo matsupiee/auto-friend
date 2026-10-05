@@ -1,5 +1,6 @@
 import {
   adjustRanges,
+  colorHex,
   beardStyleOptions,
   cheekOptions,
   eyeColorOptions,
@@ -29,15 +30,15 @@ import { AvatarFigure } from "./avatar-figure";
 
 type Gender = "male" | "female" | "other";
 
-// サムネイルで拡大して見せる範囲（200×200 の顔キャンバス上）
+// サムネイルで拡大して見せる範囲（200×220 のキャンバス上）
 const ZOOM = {
-  head: "20 10 160 160",
-  brow: "50 62 100 50",
-  eye: "50 78 100 50",
-  nose: "72 100 56 44",
-  mouth: "64 116 72 50",
-  beard: "36 96 128 84",
-  glasses: "36 70 128 66",
+  head: "6 10 188 188",
+  brow: "52 84 96 48",
+  eye: "48 100 104 52",
+  nose: "74 122 52 36",
+  mouth: "70 136 60 40",
+  beard: "30 112 140 86",
+  glasses: "30 96 140 60",
 } as const;
 
 const CATEGORIES = [
@@ -282,7 +283,10 @@ export function AvatarEditor({
       >
         <div className="flex items-end justify-center gap-4 px-4 pt-3">
           <div
-            className="flex size-36 items-end justify-center overflow-hidden rounded-3xl bg-gradient-to-b from-muted/40 to-muted"
+            className="flex size-36 items-end justify-center overflow-hidden rounded-3xl"
+            style={{
+              background: `color-mix(in oklch, ${colorHex(favoriteColorOptions, a.favoriteColor)} 24%, white)`,
+            }}
             data-testid="avatar-preview"
           >
             <AvatarFigure

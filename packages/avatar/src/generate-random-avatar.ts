@@ -1,19 +1,23 @@
 import {
   beardStyleIds,
-  cheekIds,
   eyeColorIds,
-  eyeStyleIds,
   eyebrowStyleIds,
   faceShapeIds,
   favoriteColorIds,
   glassesColorIds,
   glassesStyleIds,
   lipColorIds,
-  mouthStyleIds,
   mustacheStyleIds,
   noseStyleIds,
 } from "./avatar-parts";
-import type { HairColorId, HairStyleId, SkinColorId } from "./avatar-parts";
+import type {
+  CheekId,
+  EyeStyleId,
+  HairColorId,
+  HairStyleId,
+  MouthStyleId,
+  SkinColorId,
+} from "./avatar-parts";
 import type { Avatar } from "./avatar-schema";
 
 type Gender = "male" | "female" | "other";
@@ -64,6 +68,46 @@ const naturalHairColors: HairColorId[] = [
   "pink",
   "blue",
 ];
+// おまかせでは、かわいく見えやすいパーツを多めに出す（どのパーツも選ばれうる）
+const cuteEyes: EyeStyleId[] = [
+  "round",
+  "round",
+  "round",
+  "big",
+  "big",
+  "dot",
+  "dot",
+  "droopy",
+  "droopy",
+  "lashes",
+  "double",
+  "almond",
+  "upturned",
+  "sleepy",
+  "narrow",
+  "smile",
+  "line",
+];
+const cuteMouths: MouthStyleId[] = [
+  "smile",
+  "smile",
+  "smile",
+  "happy",
+  "happy",
+  "grin",
+  "cat",
+  "cat",
+  "small",
+  "lips",
+  "open",
+  "tongue",
+  "smirk",
+  "neutral",
+  "frown",
+  "wavy",
+];
+const cuteCheeks: CheekId[] = ["blush", "blush", "blush", "blush", "heart", "freckles", "shy"];
+
 const commonSkinColors: SkinColorId[] = [
   "porcelain",
   "light",
@@ -95,7 +139,7 @@ export function generateRandomAvatar(random: () => number, gender: Gender = "oth
     face: {
       shape: pick(faceShapeIds),
       skinColor: pick(commonSkinColors),
-      cheek: chance(feminine ? 0.45 : 0.2) ? pick(cheekIds.filter((c) => c !== "none")) : "none",
+      cheek: chance(feminine ? 0.85 : 0.55) ? pick(cuteCheeks) : "none",
     },
     hair: { style: pick(hairPool), color: hairColor, flip: chance(0.5) },
     eyebrow: {
@@ -108,7 +152,7 @@ export function generateRandomAvatar(random: () => number, gender: Gender = "oth
       spacing: around(1),
     },
     eye: {
-      style: pick(eyeStyleIds),
+      style: pick(cuteEyes),
       color: chance(0.8) ? pick(["black", "brown"] as const) : pick(eyeColorIds),
       y: around(1),
       size: around(1),
@@ -117,15 +161,15 @@ export function generateRandomAvatar(random: () => number, gender: Gender = "oth
     },
     nose: { style: pick(noseStyleIds), y: around(1), size: around(1) },
     mouth: {
-      style: pick(mouthStyleIds),
+      style: pick(cuteMouths),
       color: feminine && chance(0.5) ? pick(lipColorIds) : "natural",
       y: around(1),
       size: around(1),
     },
     facialHair: {
       mustache:
-        masculine && chance(0.18) ? pick(mustacheStyleIds.filter((m) => m !== "none")) : "none",
-      beard: masculine && chance(0.18) ? pick(beardStyleIds.filter((b) => b !== "none")) : "none",
+        masculine && chance(0.08) ? pick(mustacheStyleIds.filter((m) => m !== "none")) : "none",
+      beard: masculine && chance(0.08) ? pick(beardStyleIds.filter((b) => b !== "none")) : "none",
       color: hairColor,
     },
     glasses: {

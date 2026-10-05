@@ -40,6 +40,7 @@ export type SkinColorId = (typeof skinColorIds)[number];
 export const cheekOptions = [
   { id: "none", label: "なし" },
   { id: "blush", label: "チーク" },
+  { id: "heart", label: "ハート" },
   { id: "freckles", label: "そばかす" },
   { id: "shy", label: "照れ" },
   { id: "tired", label: "くま" },
@@ -142,6 +143,7 @@ export type NoseStyleId = (typeof noseStyleIds)[number];
 
 export const mouthStyleOptions = [
   { id: "smile", label: "にこっ" },
+  { id: "happy", label: "わーい" },
   { id: "grin", label: "にかっ" },
   { id: "neutral", label: "まっすぐ" },
   { id: "small", label: "おちょぼ" },

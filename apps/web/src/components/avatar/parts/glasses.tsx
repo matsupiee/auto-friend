@@ -4,23 +4,23 @@ import type { GlassesStyleId } from "@auto-friend/avatar/avatar-parts";
 // halfWidth はレンズの半幅で、ブリッジとつるの位置を決めるのに使う。
 type Lens = { halfWidth: number; render: (color: string) => React.ReactNode };
 
-const GLASS = "rgba(255, 255, 255, 0.18)";
+const GLASS = "rgba(255, 255, 255, 0.22)";
 
 export const glassesLenses: Record<GlassesStyleId, Lens | null> = {
   none: null,
   round: {
-    halfWidth: 11,
-    render: (color) => <circle r={11} fill={GLASS} stroke={color} strokeWidth={2.2} />,
+    halfWidth: 13,
+    render: (color) => <circle r={13} fill={GLASS} stroke={color} strokeWidth={2.4} />,
   },
   square: {
-    halfWidth: 12,
+    halfWidth: 14,
     render: (color) => (
       <rect
-        x={-12}
-        y={-9}
-        width={24}
-        height={18}
-        rx={3}
+        x={-14}
+        y={-10.5}
+        width={28}
+        height={21}
+        rx={4}
         fill={GLASS}
         stroke={color}
         strokeWidth={2.4}
@@ -28,39 +28,39 @@ export const glassesLenses: Record<GlassesStyleId, Lens | null> = {
     ),
   },
   oval: {
-    halfWidth: 12,
-    render: (color) => <ellipse rx={12} ry={9} fill={GLASS} stroke={color} strokeWidth={2.2} />,
+    halfWidth: 14,
+    render: (color) => <ellipse rx={14} ry={11} fill={GLASS} stroke={color} strokeWidth={2.4} />,
   },
   halfRim: {
-    halfWidth: 12,
+    halfWidth: 14,
     render: (color) => (
       <>
         <path
-          d="M-12 -1 C-12 9 12 9 12 -1"
+          d="M-14 -1 C-14 11 14 11 14 -1"
           fill={GLASS}
           stroke={color}
-          strokeWidth={0.9}
-          strokeOpacity={0.6}
+          strokeWidth={1}
+          strokeOpacity={0.55}
         />
         <path
-          d="M-12 -1 L-12 -5 C-12 -8 12 -8 12 -5 L12 -1"
+          d="M-14 -1 L-14 -6 C-14 -9.6 14 -9.6 14 -6 L14 -1"
           fill="none"
           stroke={color}
-          strokeWidth={3.2}
+          strokeWidth={3.4}
           strokeLinejoin="round"
         />
       </>
     ),
   },
   big: {
-    halfWidth: 14,
+    halfWidth: 16,
     render: (color) => (
       <rect
-        x={-14}
-        y={-12}
-        width={28}
-        height={24}
-        rx={8}
+        x={-16}
+        y={-14}
+        width={32}
+        height={28}
+        rx={10}
         fill={GLASS}
         stroke={color}
         strokeWidth={2.6}
@@ -68,16 +68,25 @@ export const glassesLenses: Record<GlassesStyleId, Lens | null> = {
     ),
   },
   sunglasses: {
-    halfWidth: 13,
+    halfWidth: 15,
     render: (color) => (
-      <path
-        d="M-13 -7 L13 -7 C13 4 8 9 0 9 C-8 9 -13 4 -13 -7 Z"
-        fill="#1f2328"
-        fillOpacity={0.9}
-        stroke={color}
-        strokeWidth={2}
-        strokeLinejoin="round"
-      />
+      <>
+        <path
+          d="M-15 -8 L15 -8 C15 5 9.4 10.6 0 10.6 C-9.4 10.6 -15 5 -15 -8 Z"
+          fill="#1f2328"
+          fillOpacity={0.9}
+          stroke={color}
+          strokeWidth={2.2}
+          strokeLinejoin="round"
+        />
+        <path
+          d="M-10 -4 L-5 -4"
+          stroke="white"
+          strokeOpacity={0.5}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      </>
     ),
   },
 };
