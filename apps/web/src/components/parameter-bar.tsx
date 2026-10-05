@@ -10,15 +10,14 @@ export function ParameterBar({
 }) {
   const percent = Math.round((value / max) * 100);
   return (
-    <div className="grid grid-cols-[7rem_1fr_2.5rem] items-center gap-2 text-xs">
-      <span className="text-muted-foreground">{label}</span>
-      <div className="h-2 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-pink-400 to-rose-500"
-          style={{ width: `${percent}%` }}
-        />
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between text-sm">
+        <span>{label}</span>
+        <span className="text-xs tabular-nums text-muted-foreground">{percent}</span>
       </div>
-      <span className="text-right tabular-nums text-muted-foreground">{percent}</span>
+      <div className="h-1 overflow-hidden rounded-full bg-muted">
+        <div className="h-full rounded-full bg-foreground/80" style={{ width: `${percent}%` }} />
+      </div>
     </div>
   );
 }

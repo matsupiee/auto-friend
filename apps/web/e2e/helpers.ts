@@ -13,7 +13,7 @@ export async function signIn(page: Page, email: string) {
 
 export async function signUp(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "エージェントを作ってはじめる" }).click();
+  await page.getByRole("link", { name: "エージェントを作ってはじめる" }).click();
   await page.getByLabel("ニックネーム").fill("テスター");
   await page.getByLabel("メールアドレス").fill(`e2e-${Date.now()}@example.test`);
   await page.getByLabel("パスワード").fill("password1234");

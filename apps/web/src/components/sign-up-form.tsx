@@ -1,11 +1,10 @@
 import { Button } from "@auto-friend/ui/components/button";
-import { Input } from "@auto-friend/ui/components/input";
-import { Label } from "@auto-friend/ui/components/label";
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 
+import { AuthField, AuthLayout } from "@/components/auth-layout";
 import { authClient } from "@/lib/auth-client";
 
 import Loader from "./loader";
@@ -56,105 +55,59 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
   }
 
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">アカウント作成</h1>
-
+    <AuthLayout
+      title="アカウント作成"
+      description="登録すると、あなたの分身となるエージェントを作れます"
+      footer={
+        <Button variant="link" onClick={onSwitchToSignIn} className="h-auto p-0">
+          アカウントをお持ちの方はログイン
+        </Button>
+      }
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="space-y-4"
+        className="space-y-2"
       >
-        <div>
-          <form.Field name="name">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>ニックネーム</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+        <form.Field name="name">
+          {(field) => <AuthField field={field} label="ニックネーム" autoComplete="nickname" />}
+        </form.Field>
 
-        <div>
-          <form.Field name="email">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>メールアドレス</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+        <form.Field name="email">
+          {(field) => (
+            <AuthField field={field} label="メールアドレス" type="email" autoComplete="email" />
+          )}
+        </form.Field>
 
-        <div>
-          <form.Field name="password">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>パスワード</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+        <form.Field name="password">
+          {(field) => (
+            <AuthField
+              field={field}
+              label="パスワード"
+              type="password"
+              autoComplete="new-password"
+            />
+          )}
+        </form.Field>
 
         <form.Subscribe
           selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}
         >
           {({ canSubmit, isSubmitting }) => (
-            <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-3 w-full"
+              disabled={!canSubmit || isSubmitting}
+            >
               {isSubmitting ? "送信中..." : "はじめる"}
             </Button>
           )}
         </form.Subscribe>
       </form>
-
-      <div className="mt-4 text-center">
-        <Button
-          variant="link"
-          onClick={onSwitchToSignIn}
-          className="text-indigo-600 hover:text-indigo-800"
-        >
-          アカウントをお持ちの方はログイン
-        </Button>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }

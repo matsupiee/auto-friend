@@ -12,12 +12,12 @@ export const STATE_LABELS: Record<string, { emoji: string; label: string }> = {
 };
 
 export const GROUP_LABELS: Record<string, string> = {
-  partner: "❤️ 恋人・交際中",
-  crush: "💗 片思い",
-  interested: "💓 気になる",
-  friend: "💛 友達",
-  acquaintance: "💙 知り合い",
-  ex: "💔 元恋人",
+  partner: "恋人・交際中",
+  crush: "片思い",
+  interested: "気になる",
+  friend: "友達",
+  acquaintance: "知り合い",
+  ex: "元恋人",
 };
 
 export const EVENT_EMOJI: Record<string, string> = {

@@ -2,7 +2,7 @@ import { Toaster } from "@auto-friend/ui/components/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
-import Header from "@/components/header";
+import { AppShell } from "@/components/app-shell";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
 
@@ -34,11 +34,10 @@ function RootComponent() {
         disableTransitionOnChange
         storageKey="vite-ui-theme"
       >
-        <div className="min-h-svh bg-gradient-to-b from-pink-50/60 to-background dark:from-pink-950/20">
-          <Header />
+        <AppShell>
           <Outlet />
-        </div>
-        <Toaster richColors position="top-center" />
+        </AppShell>
+        <Toaster position="top-center" />
       </ThemeProvider>
     </>
   );
