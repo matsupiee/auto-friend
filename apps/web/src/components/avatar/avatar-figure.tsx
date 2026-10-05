@@ -28,7 +28,7 @@ const EYE = { x: 26, y: 122 };
 const BROW = { x: 26, y: 105 };
 const EAR_Y = 122;
 const NOSE_Y = 137;
-const MOUTH_Y = 150;
+const MOUTH_Y = 152;
 const MOUTH_SCALE = 1.2;
 const MOLE = { x: 124, y: 148 };
 const STEP = { y: 1.6, size: 0.08, rotation: 5, spacing: 1.5, mole: 1.5 };
@@ -42,7 +42,7 @@ const BEARD_BASE = { halfWidth: 60, chin: 178 };
 const OUTLINE = { width: 1.2, opacity: 0.55 };
 
 export const BUST_VIEW_BOX = "-5 4 210 210";
-const FULL_VIEW_BOX = "0 0 200 372";
+const FULL_VIEW_BOX = "0 0 200 404";
 
 const scaleOf = (size: number) => 1 + size * STEP.size;
 
@@ -93,7 +93,7 @@ function Eye({ shape, ballFill, skin }: { shape: EyeShape; ballFill: string; ski
           <circle
             cx={ball.rx * 0.32}
             cy={-ball.ry * 0.34}
-            r={Math.max(1.4, ball.rx * 0.34)}
+            r={Math.max(1.4, ball.rx * 0.28)}
             fill="white"
           />
         </>
@@ -211,13 +211,18 @@ export function AvatarFigure({
           <stop offset="0.5" stopColor={hair} />
           <stop offset="1" stopColor={shadeColor(hair, 0.18)} />
         </linearGradient>
+        {/* 後ろ髪は前髪より暗くして、層を分ける */}
+        <linearGradient id={id("hairBack")} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={shadeColor(hair, 0.12)} />
+          <stop offset="1" stopColor={shadeColor(hair, 0.28)} />
+        </linearGradient>
         <linearGradient id={id("shirt")} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={shadeColor(shirt, -0.12)} />
           <stop offset="1" stopColor={shadeColor(shirt, 0.14)} />
         </linearGradient>
         <linearGradient id={id("eye")} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={shadeColor(eyeColor, 0.72)} />
-          <stop offset="1" stopColor={shadeColor(eyeColor, 0.3)} />
+          <stop offset="1" stopColor={shadeColor(eyeColor, 0.42)} />
         </linearGradient>
         <radialGradient id={id("blush")}>
           <stop offset="0" stopColor="#ff8f9f" stopOpacity={0.3} />
@@ -246,7 +251,7 @@ export function AvatarFigure({
           {hairStyle.back && (
             <path
               d={hairStyle.back}
-              fill={url("hair")}
+              fill={url("hairBack")}
               stroke={hairLine}
               strokeWidth={OUTLINE.width}
               strokeOpacity={OUTLINE.opacity}

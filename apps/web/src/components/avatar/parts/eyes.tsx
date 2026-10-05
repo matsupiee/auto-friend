@@ -29,7 +29,10 @@ const ALMOND: EyeShape = {
 
 export const eyeShapes: Record<EyeStyleId, EyeShape> = {
   round: ROUND,
-  dot: { ball: { rx: 3.8, ry: 4.4 } },
+  dot: {
+    ball: { rx: 4.5, ry: 5.5 },
+    lid: { d: "M-7 -2.8 C-4.4 -7.4 3.6 -7.6 6.4 -4.2", width: 2.2 },
+  },
   big: BIG,
   almond: ALMOND,
   upturned: { ...ALMOND, rotate: 12 },

@@ -4,7 +4,7 @@ import type { Avatar } from "@auto-friend/avatar/avatar-schema";
 // 服は好きな色のトップスに白い襟。shirt にはグラデーション（url(#...)）も渡せる。
 // 全身表示で、いちばん背が高いときの足元の y を FULL_BODY_FLOOR とし、
 // これより低い人は下にずらして身長差を見せる。
-export const FULL_BODY_FLOOR = 366;
+export const FULL_BODY_FLOOR = 396;
 const NECK_BOTTOM = 182;
 
 const PANTS = "#46506e";
@@ -72,7 +72,8 @@ export function Bust({ body, skin, shirt, shirtLine }: BodyProps) {
 export function fullBodyLength(body: Avatar["body"]) {
   const h = body.height / 100;
   const torso = 62 + h * 22;
-  const legs = 52 + h * 44;
+  // 脚を長めにして、2.7〜3 頭身にする
+  const legs = (52 + h * 44) * 1.3;
   return { torso, legs, bottom: NECK_BOTTOM + torso + legs };
 }
 
@@ -85,11 +86,12 @@ export function FullBody({ body, skin, skinLine, shirt, shirtLine }: BodyProps) 
   const legWidth = 25 * b;
   const top = NECK_BOTTOM - 2;
   const legTop = top + torso - 8;
-  const armX = width / 2 + armWidth / 2 - 5;
+  // 肩の付け根を胴にめり込ませ、外へ少しだけ開く
+  const armX = width / 2 + armWidth / 2 - 10;
   return (
     <>
       {[-1, 1].map((side) => (
-        <g key={side} transform={`rotate(${side * 10} ${100 + side * armX} ${top + 6})`}>
+        <g key={side} transform={`rotate(${side * 7} ${100 + side * armX} ${top + 6})`}>
           <rect
             x={100 + side * armX - armWidth / 2}
             y={top + 4}
@@ -104,7 +106,7 @@ export function FullBody({ body, skin, skinLine, shirt, shirtLine }: BodyProps) 
           <circle
             cx={100 + side * armX}
             cy={top + 4 + torso * 0.8 + 4}
-            r={armWidth * 0.6}
+            r={armWidth * 0.55}
             fill={skin}
             stroke={skinLine}
             strokeWidth={0.8}
