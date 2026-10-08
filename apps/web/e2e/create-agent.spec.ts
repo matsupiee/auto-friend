@@ -8,8 +8,7 @@ test("登録してエージェントを作ると、ホームに出来事が並�
   await expect(page.getByRole("button", { name: "次へ" })).toBeDisabled();
   await createAgent(page);
 
-  await expect(page.getByText("あなたのエージェント", { exact: true })).toBeVisible();
-  await expect(page.getByText("ハルキ", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "ハルキの毎日" })).toBeVisible();
 
   // 作成済みならオンボーディングには戻らない
   await page.goto("/onboarding");

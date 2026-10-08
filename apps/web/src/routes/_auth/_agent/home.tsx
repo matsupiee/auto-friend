@@ -1,7 +1,7 @@
-import { Button, buttonVariants } from "@auto-friend/ui/components/button";
+import { Button } from "@auto-friend/ui/components/button";
 import { cn } from "@auto-friend/ui/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ChevronRight, Heart, Loader2, MessageCircle, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import { ActivityItem } from "@/components/activity-item";
 import { AgentAvatar, EmojiAvatar } from "@/components/agent-avatar";
 import { PageContainer } from "@/components/app-shell";
 import Loader from "@/components/loader";
-import { Section, Stat } from "@/components/section";
+import { Section } from "@/components/section";
 import { EVENT_EMOJI, formatMinute } from "@/lib/agent-display";
 import { trpc } from "@/utils/trpc";
 
@@ -53,56 +53,52 @@ function HomePage() {
 
   return (
     <PageContainer>
-      {/* プロフィールヘッダー */}
+      {/* 今日のようす。プロフィール（どんな子か）ではなく、日々の出来事を追う画面であることを先に見せる */}
       <div className="px-4 pt-5 pb-4">
-        <div className="flex items-center gap-6">
-          <Link to="/agents/$agentId" params={{ agentId: me.id }} aria-label="プロフィールを見る">
-            <AgentAvatar id={me.id} name={me.displayName} size="xl" ring />
-          </Link>
-          <div className="grid flex-1 grid-cols-2 gap-2">
-            <Stat value={me.todayLikeCount} label="今日のいいね" testId="today-likes" />
-            <Stat value={me.totalLikeCount} label="累計いいね" />
+        <p className="text-[13px] font-semibold text-muted-foreground">世界の{me.currentDay}日目</p>
+        <div className="mt-1 flex items-center gap-2.5">
+          <AgentAvatar id={me.id} name={me.displayName} size="sm" />
+          <h1 className="min-w-0 flex-1 truncate text-xl font-bold tracking-tight">
+            {me.displayName}の毎日
+          </h1>
+        </div>
+        <p className="mt-2 text-sm">
+          {me.partner ? (
+            <>
+              <Heart className="mr-1 inline size-3.5 -translate-y-px fill-brand text-brand" />
+              {me.partner.displayName}と{me.partner.state === "partner" ? "恋人" : "交際中"}
+            </>
+          ) : (
+            <span className="text-muted-foreground">恋人はいません</span>
+          )}
+        </p>
+        <div className="mt-4 flex items-center gap-4 rounded-2xl bg-brand-soft px-4 py-3.5">
+          <Heart className="size-7 shrink-0 fill-brand text-brand" />
+          <div className="flex-1">
+            <p className="text-[13px] font-semibold text-brand">今日もらったいいね</p>
+            <p className="text-2xl leading-tight font-bold tabular-nums" data-testid="today-likes">
+              {me.todayLikeCount}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-[13px] text-muted-foreground">累計</p>
+            <p className="text-base font-semibold tabular-nums">{me.totalLikeCount}</p>
           </div>
         </div>
-        <div className="mt-3 space-y-0.5">
-          <p className="text-[15px] font-semibold">{me.displayName}</p>
-          <p className="text-[13px] text-muted-foreground">あなたのエージェント</p>
-          <p className="text-sm">
-            {me.partner ? (
-              <>
-                <Heart className="mr-1 inline size-3.5 -translate-y-px fill-brand text-brand" />
-                {me.partner.displayName}と{me.partner.state === "partner" ? "恋人" : "交際中"}
-              </>
-            ) : (
-              "恋人はいません"
-            )}
-            <span className="text-muted-foreground"> ・ 世界の{me.currentDay}日目</span>
-          </p>
-        </div>
-        <div className="mt-4 flex gap-2">
-          <Link
-            to="/agents/$agentId"
-            params={{ agentId: me.id }}
-            className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "flex-1")}
-          >
-            プロフィール
-          </Link>
-          <Button
-            size="sm"
-            className="flex-1"
-            disabled={advance.isPending}
-            onClick={() => advance.mutate()}
-          >
-            {advance.isPending ? (
-              <>
-                <Loader2 className="animate-spin" />
-                世界が動いています...
-              </>
-            ) : (
-              "次の日へ進める"
-            )}
-          </Button>
-        </div>
+        <Button
+          className="mt-3 w-full"
+          disabled={advance.isPending}
+          onClick={() => advance.mutate()}
+        >
+          {advance.isPending ? (
+            <>
+              <Loader2 className="animate-spin" />
+              世界が動いています...
+            </>
+          ) : (
+            "次の日へ進める"
+          )}
+        </Button>
       </div>
 
       {/* 日付タブ */}

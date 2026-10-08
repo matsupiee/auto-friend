@@ -155,25 +155,39 @@ function AgentPage() {
         )}
       </div>
 
-      <Section title="最近の出来事" flush>
-        {a.recentEvents.length === 0 ? (
-          <p className="px-4 text-sm text-muted-foreground">最近の大きな出来事はありません。</p>
-        ) : (
-          <ul>
-            {a.recentEvents.map((e) => (
-              <li key={e.id} className="flex items-center gap-3 px-4 py-2.5">
-                <EmojiAvatar emoji="✨" size="md" className="text-lg" />
-                <p className="min-w-0 flex-1 text-sm leading-snug">
-                  {e.text}{" "}
-                  <time className="whitespace-nowrap text-muted-foreground">
-                    {e.day}日目 {formatMinute(e.minuteOfDay)}
-                  </time>
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
+      {/* 自分のエージェントの出来事はホームで日ごとに見られるので、ここでは重ねて出さない */}
+      {a.isMine ? (
+        <Section title="毎日の出来事" flush>
+          <Link
+            to="/home"
+            className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/60 active:bg-muted"
+          >
+            <EmojiAvatar emoji="📅" size="md" className="text-lg" />
+            <span className="flex-1 text-sm">1日ごとの出来事と日記はホームで見られます</span>
+            <ChevronRight className="size-5 text-muted-foreground" />
+          </Link>
+        </Section>
+      ) : (
+        <Section title="最近の出来事" flush>
+          {a.recentEvents.length === 0 ? (
+            <p className="px-4 text-sm text-muted-foreground">最近の大きな出来事はありません。</p>
+          ) : (
+            <ul>
+              {a.recentEvents.map((e) => (
+                <li key={e.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <EmojiAvatar emoji="✨" size="md" className="text-lg" />
+                  <p className="min-w-0 flex-1 text-sm leading-snug">
+                    {e.text}{" "}
+                    <time className="whitespace-nowrap text-muted-foreground">
+                      {e.day}日目 {formatMinute(e.minuteOfDay)}
+                    </time>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
+      )}
     </PageContainer>
   );
 }
